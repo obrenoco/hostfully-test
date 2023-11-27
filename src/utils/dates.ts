@@ -13,7 +13,7 @@ export function dateRangeToObject(dateRange: moment.Moment[]) {
   };
 }
 
-export const calculateDaysDifference = (valueStr: any) => {
+export const calculateDaysDifference = (valueStr: string[]) => {
   const startDate = new Date(valueStr[0]);
   const endDate = new Date(valueStr[1]);
   const timeDifference = endDate.getTime() - startDate.getTime();
