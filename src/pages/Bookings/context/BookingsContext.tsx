@@ -1,9 +1,9 @@
-import React, { ReactNode, createContext } from "react";
+import { ReactNode, createContext } from "react";
 import { useState } from "react";
-import { DataType } from "../Bookings";
+import { BookingType } from "../Bookings";
 import { dateRangeToObject } from "../../../utils/dates";
 
-const dataSource: DataType[] = [
+const dataSource: BookingType[] = [
   {
     key: 1,
     name: "Paul and Mary",
@@ -11,6 +11,9 @@ const dataSource: DataType[] = [
     endDate: "12/02/2024",
     price: 150,
     adults: 2,
+    kids: 3,
+    enfants: 1,
+    currency: "EUR",
   },
   {
     key: 2,
@@ -20,15 +23,16 @@ const dataSource: DataType[] = [
     price: 450,
     adults: 4,
     enfants: 1,
+    currency: "USD",
     observations:
       "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
   },
 ];
 
 export type BookingsContextType = {
-  bookings: DataType[];
-  addBooking: (item: DataType) => void;
-  updateBooking: (newItem: DataType) => void;
+  bookings: BookingType[];
+  addBooking: (item: BookingType) => void;
+  updateBooking: (newItem: BookingType) => void;
   deleteBooking: (index: number) => void;
 };
 
@@ -46,7 +50,7 @@ export const BookingsProvider = ({ children }: { children: ReactNode }) => {
     setBookings((prevTreasure) => [...prevTreasure, item]);
 
   const updateBooking: BookingsContextType["updateBooking"] = (newItem) => {
-    const newDateRange = dateRangeToObject(newItem.dateRange);
+    const newDateRange = dateRangeToObject(newItem.dateRange!);
     setBookings((prevBookings) => {
       const updatedBookings = prevBookings.map((booking) => {
         return booking.key === newItem.key
@@ -61,12 +65,10 @@ export const BookingsProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const deleteBooking: BookingsContextType["deleteBooking"] = (key) => {
-    setBookings((prevBooking: DataType[]) =>
+  const deleteBooking: BookingsContextType["deleteBooking"] = (key) =>
+    setBookings((prevBooking: BookingType[]) =>
       [...prevBooking].filter((i) => i.key !== key)
     );
-  };
-
   return (
     <BookingContext.Provider
       value={{

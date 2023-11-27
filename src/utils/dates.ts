@@ -1,7 +1,5 @@
 export function dateRangeToObject(dateRange: moment.Moment[]) {
-  if (!Array.isArray(dateRange) || dateRange.length !== 2) {
-    return null;
-  }
+  if (!Array.isArray(dateRange) || dateRange.length !== 2) return null;
 
   const [startDate, endDate] = dateRange;
   const formattedStartDate = startDate.format("MM/DD/YYYY");
