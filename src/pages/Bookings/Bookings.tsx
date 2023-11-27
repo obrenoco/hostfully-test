@@ -404,8 +404,8 @@ export const Bookings = () => {
                     height: "85px",
                     borderRadius: "50%",
                     overflow: "hidden",
-                    border: "6px solid #3498db",
-                    padding: 8,
+                    border: "4px solid #81b585",
+                    padding: 4,
                   }}
                 >
                   <img
@@ -597,16 +597,30 @@ export const Bookings = () => {
                 </div>
               </div>
 
-              <Button
-                style={{
-                  backgroundColor: "#bf8080",
-                  color: "white",
-                  borderRadius: 5,
-                }}
-              >
-                {" "}
-                Edit
-              </Button>
+              <div>
+                <Button
+                  size="small"
+                  style={{
+                    backgroundColor: "rgb(110, 143, 197)",
+                    color: "white",
+                    borderRadius: 5,
+                    width: 75,
+                  }}
+                >
+                  Edit
+                </Button>
+                <Button
+                  size="small"
+                  style={{
+                    backgroundColor: "#bf8080",
+                    color: "white",
+                    borderRadius: 5,
+                    width: 75,
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
             </div>
           ))}
         </div>
