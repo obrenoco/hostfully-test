@@ -71,32 +71,3 @@ export const isOverlapingWithBlockedDates = (
     doDateRangesOverlap(targetBooking, booking)
   );
 };
-
-const isOverlapWithArray = (
-  dateRange: [string, string],
-  bookingsArray: PostBookingType[]
-): boolean => {
-  const doDateRangesOverlap = (
-    bookingA: PostBookingType,
-    bookingB: PostBookingType
-  ): boolean => {
-    const startDateA = moment(bookingA.startDate);
-    const endDateA = moment(bookingA.endDate);
-    const startDateB = moment(bookingB.startDate);
-    const endDateB = moment(bookingB.endDate);
-
-    return (
-      (startDateA.isSameOrBefore(endDateB) &&
-        endDateA.isSameOrAfter(startDateB)) ||
-      (startDateB.isSameOrBefore(endDateA) &&
-        endDateB.isSameOrAfter(startDateA))
-    );
-  };
-
-  const [start, end] = dateRange;
-  const targetBooking = { startDate: start, endDate: end } as PostBookingType;
-
-  return bookingsArray.some((booking) =>
-    doDateRangesOverlap(targetBooking, booking)
-  );
-};
