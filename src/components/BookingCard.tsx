@@ -48,12 +48,12 @@ export const BookingCard = ({
   onClickView,
 }: BookingCardType) => (
   <div
-    className="flex flex-col items-center w-full gap-4 pb-10  border-b-2 border-light-grey px-4"
+    className="flex flex-col items-center w-full gap-4 pb-10  border-b-2 border-light-grey"
     key={index}
   >
-    <div className="flex items-center w-full">
-      <div className="relative mr-5 hidden md:inline-block">
-        <div className="w-20 h-20 rounded-full overflow-hidden p-1 border-4 border-secondary ">
+    <div className="flex items-center w-full flex-col gap-4">
+      <div className="relative mr-5  md:inline-block">
+        <div className="w-24 h-24 rounded-full overflow-hidden p-1 border-4 border-secondary ">
           <img
             src={booking.img || PlaceholderImage}
             alt="Round photography"

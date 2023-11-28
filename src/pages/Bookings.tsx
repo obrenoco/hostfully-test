@@ -178,7 +178,7 @@ export const Bookings = () => {
 
   return (
     <div>
-      <section className="p-4">
+      <section className="py-4 px-6">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <button
             onClick={openCreateModal}
