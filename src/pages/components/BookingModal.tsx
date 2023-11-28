@@ -1,7 +1,7 @@
 import { Modal, Form, Select, DatePicker, Input, Button } from "antd";
 import { Fragment } from "react";
 import moment from "moment";
-import { PostBookingType } from "../types/booking";
+import { BookingType, DateRange } from "../../types/booking";
 
 const { RangePicker } = DatePicker;
 
@@ -20,8 +20,9 @@ type BookingModalProps = {
   handleUpdateBooking: () => void;
   onChangeDateRange: any;
   disabledDate: (date: moment.Moment) => boolean;
-  onFinish: (item: PostBookingType) => Promise<void>;
+  onFinish: (item: BookingType & DateRange) => Promise<void>;
   isSubmitButtonDisabled: boolean;
+  totalNights: number;
 };
 
 const guestOptions = Array.from({ length: 11 }, (_, i) => ({
@@ -43,6 +44,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   disabledDate,
   onFinish,
   isSubmitButtonDisabled,
+  totalNights,
 }) => {
   const modalFooter = () => {
     switch (actionMode) {
@@ -99,7 +101,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       title={
         actionMode === ActionMode.Create ? "New booking" : "Update booking"
       }
-      visible={isModalOpen}
+      open={isModalOpen}
       onCancel={handleCancel}
       style={{ top: 20 }}
       footer={modalFooter()}
@@ -108,9 +110,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         name="create"
         onFinish={onFinish}
         disabled={actionMode === ActionMode.View}
-        initialValues={
-          { currency: "USD", adults: 1, kids: 0, enfants: 0 } as PostBookingType
-        }
+        initialValues={{ adults: 1, kids: 0, enfants: 0 } as BookingType}
         form={form}
         layout="vertical"
       >
@@ -142,6 +142,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             format={dateFormatList}
           />
         </Form.Item>
+
+        <p>Total nights: {totalNights}</p>
+        {/* <p>Total price: {totalNights}</p> */}
 
         <Form.Item name="observations" label="Observations">
           <Input.TextArea

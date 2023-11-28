@@ -1,5 +1,5 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { Modal, Form, Empty, notification, Input } from "antd";
+import { Modal, Form, Empty, notification, Input, Skeleton } from "antd";
 import {
   SearchOutlined,
   PlusOutlined,
@@ -9,14 +9,14 @@ import "antd/dist/antd.min.css";
 import moment from "moment";
 import { BookingContext } from "../context/BookingsContext";
 import {
-  calculateDaysDifference,
+  calculateTotalNights,
   dateRangeToObject,
   generateBlockedDates,
   isOverlapingWithBlockedDates,
 } from "../utils/dates";
-import { BookingCard } from "../components/BookingCard";
-import { BookingModal } from "../components/BookingModal";
-import { PostBookingType } from "../types/booking";
+import { BookingCard } from "./components/BookingCard";
+import { BookingModal } from "./components/BookingModal";
+import { BookingType, DateRange } from "../types/booking";
 
 enum NotificationType {
   Success = "success",
@@ -35,15 +35,50 @@ const dailyPrice = 150;
 
 const dateFormatList = ["MM/DD/YYYY", "MM/DD/YYYY"];
 
+const dataSource: BookingType[] = [
+  {
+    key: 1,
+    name: "Cabo Frio - 3 bedroom",
+    startDate: "12/01/2023",
+    endDate: "12/02/2023",
+    totalNights: 1,
+    dailyPrice: 150,
+    totalPrice: 150,
+    adults: 2,
+    kids: 3,
+    enfants: 1,
+    img: "https://viagemeturismo.abril.com.br/wp-content/uploads/2023/05/VT-Airbnb-Cabo-Frio-1.jpeg?quality=90&strip=info&w=720&crop=1",
+  },
+  {
+    key: 2,
+    name: "Cape Town with amazing view",
+    startDate: "12/12/2023",
+    endDate: "12/15/2023",
+    totalNights: 3,
+    totalPrice: 450,
+    dailyPrice: 150,
+    adults: 4,
+    kids: 0,
+    enfants: 1,
+    img: "https://a.cdn-hotels.com/gdcs/production67/d440/98ce2718-e399-48d7-867e-5a49a19d87f3.jpg",
+    observations:
+      "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
+  },
+];
+
 export const Bookings = () => {
+  const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [actionMode, setActionMode] = useState(ActionMode.View);
-  const [daysDifference, setDaysDifference] = useState(0);
+  const [totalNights, setTotalNights] = useState(0);
   const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(false);
-  const [form] = Form.useForm();
-  const { bookings, addBooking, updateBooking, deleteBooking } =
+  const { bookings, addBooking, updateBooking, deleteBooking, setBookings } =
     useContext(BookingContext);
   const [filteredBookings, setFilteredBookings] = useState(bookings);
+
+  useEffect(() => {
+    setBookings(dataSource);
+  }, [setBookings]);
 
   useEffect(() => {
     setFilteredBookings(bookings);
@@ -51,7 +86,7 @@ export const Bookings = () => {
 
   const handleCancel = () => {
     form.resetFields();
-    setDaysDifference(0);
+    setTotalNights(0);
     setIsModalOpen(false);
   };
 
@@ -66,15 +101,17 @@ export const Bookings = () => {
     });
   };
 
-  const onFinish = async (item: PostBookingType) => {
-    const convertedDates = dateRangeToObject(item.dateRange!);
+  const handleCreateBooking = async (item: BookingType & DateRange) => {
+    const convertedDates = dateRangeToObject(item.dateRange);
     const { dateRange, ...modified } = {
       ...item,
       key: Math.floor(Math.random() * 10 ** 10),
       startDate: convertedDates?.startDate,
       endDate: convertedDates?.endDate,
-      price: daysDifference * dailyPrice,
+      totalPrice: item.dailyPrice * item.totalNights,
     };
+
+    console.log(modified);
 
     try {
       await form.validateFields();
@@ -86,11 +123,8 @@ export const Bookings = () => {
     }
   };
 
-  const onChangeDateRange = (
-    _: any,
-    valueArray: PostBookingType["dateRange"]
-  ) => {
-    if (isOverlapingWithBlockedDates(valueArray!, bookings)) {
+  const onChangeDateRange = (val: DateRange["dateRange"]) => {
+    if (isOverlapingWithBlockedDates(val, bookings)) {
       form.setFields([
         {
           name: "dateRange",
@@ -101,6 +135,9 @@ export const Bookings = () => {
       ]);
       setIsSubmitBtnDisabled(true);
     } else {
+      console.log(calculateTotalNights(val));
+
+      setTotalNights(calculateTotalNights(val));
       setIsSubmitBtnDisabled(false);
     }
     console.log(form.getFieldError("dateRange"));
@@ -126,7 +163,7 @@ export const Bookings = () => {
     } catch (error) {}
   };
 
-  const onClickView = (booking: PostBookingType) => {
+  const onClickView = (booking: BookingType) => {
     form.setFieldsValue({
       ...booking,
       dateRange: [
@@ -134,11 +171,12 @@ export const Bookings = () => {
         moment(booking.endDate, dateFormatList[0]),
       ],
     });
+    setTotalNights(booking.totalNights);
     setActionMode(ActionMode.View);
     setIsModalOpen(true);
   };
 
-  const onClickEditing = (booking: PostBookingType) => {
+  const onClickEdit = (booking: BookingType) => {
     form.setFieldsValue({
       ...booking,
       dateRange: [
@@ -146,14 +184,13 @@ export const Bookings = () => {
         moment(booking.endDate, dateFormatList[0]),
       ],
     });
-    setDaysDifference(
-      calculateDaysDifference([booking.startDate, booking.endDate])
-    );
+    setTotalNights(booking.totalNights);
+    // setTotalNights(calculateTotalNights(booking));
     setActionMode(ActionMode.Edit);
     setIsModalOpen(true);
   };
 
-  const onClickDelete = (booking: PostBookingType) => {
+  const onClickDelete = (booking: BookingType) => {
     Modal.confirm({
       title: "Are you sure delete this booking?",
       icon: <ExclamationCircleOutlined />,
@@ -208,7 +245,7 @@ export const Bookings = () => {
                 index={index}
                 onClickDelete={onClickDelete}
                 onClickView={onClickView}
-                onClickEdit={onClickEditing}
+                onClickEdit={onClickEdit}
                 key={booking.key}
               />
             ))
@@ -224,9 +261,10 @@ export const Bookings = () => {
         handleUpdateBooking={handleUpdateBooking}
         isModalOpen={isModalOpen}
         onChangeDateRange={onChangeDateRange}
-        onFinish={onFinish}
+        onFinish={handleCreateBooking}
         setActionMode={setActionMode}
         isSubmitButtonDisabled={isSubmitBtnDisabled}
+        totalNights={totalNights}
       />
     </div>
   );

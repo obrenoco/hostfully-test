@@ -1,5 +1,5 @@
 import moment, { Moment } from "moment";
-import { PostBookingType } from "../types/booking";
+import { BookingType, DateRange } from "../types/booking";
 
 export function dateRangeToObject(dateRange: [moment.Moment, moment.Moment]) {
   const [startDate, endDate] = dateRange;
@@ -12,14 +12,14 @@ export function dateRangeToObject(dateRange: [moment.Moment, moment.Moment]) {
   };
 }
 
-export const calculateDaysDifference = (valueStr: string[]) => {
-  const startDate = new Date(valueStr[0]);
-  const endDate = new Date(valueStr[1]);
+export const calculateTotalNights = (valueStr: DateRange["dateRange"]) => {
+  const startDate = new Date(valueStr[0].toDate());
+  const endDate = new Date(valueStr[1].toDate());
   const timeDifference = endDate.getTime() - startDate.getTime();
   return timeDifference / (1000 * 60 * 60 * 24);
 };
 
-export const generateBlockedDates = (bookings: PostBookingType[]) => {
+export const generateBlockedDates = (bookings: BookingType[]) => {
   const blockedDates: string[] = [];
   const today = moment().startOf("day");
 
@@ -44,12 +44,12 @@ export const generateBlockedDates = (bookings: PostBookingType[]) => {
 };
 
 export const isOverlapingWithBlockedDates = (
-  dateRange: [moment.Moment, moment.Moment],
-  bookingsArray: PostBookingType[]
+  dateRange: DateRange["dateRange"],
+  bookingsArray: BookingType[]
 ): boolean => {
   const doDateRangesOverlap = (
     bookingA: { startDate: moment.Moment; endDate: moment.Moment },
-    bookingB: PostBookingType
+    bookingB: BookingType
   ): boolean => {
     const startDateA = moment(bookingA.startDate);
     const endDateA = moment(bookingA.endDate);

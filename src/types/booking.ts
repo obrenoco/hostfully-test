@@ -1,16 +1,16 @@
-export type PostBookingType = {
+export type BookingType = {
   key: number;
   name: string;
   startDate: string;
   endDate: string;
-  price: number;
-  currency: string;
+  totalNights: number;
+  totalPrice: number;
+  dailyPrice: number;
   observations?: string;
-  dateRange?: [moment.Moment, moment.Moment];
   adults: number;
   kids: number;
   enfants: number;
-  img?: string;
+  img: string;
 };
 
-export type GetBookingType = {};
+export type DateRange = { dateRange: [moment.Moment, moment.Moment] };

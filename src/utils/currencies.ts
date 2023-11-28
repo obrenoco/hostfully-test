@@ -1,7 +1,7 @@
-export function formatCurrency(amount: number, currency: string) {
+export function formatNumberToDollar(amount: number) {
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: currency,
+    currency: "USD",
     minimumFractionDigits: 2,
   });
 

@@ -1,7 +1,7 @@
-import { calculateDaysDifference } from "../utils/dates";
-import PlaceholderImage from "../assets/placeholder.png";
-import { formatCurrency } from "../utils/currencies";
-import { PostBookingType } from "../types/booking";
+import { calculateTotalNights } from "../../utils/dates";
+import PlaceholderImage from "../../assets/placeholder.png";
+import { formatNumberToDollar } from "../../utils/currencies";
+import { BookingType } from "../../types/booking";
 
 const GuestIcon = ({
   num,
@@ -20,10 +20,10 @@ const GuestIcon = ({
 
 type BookingCardType = {
   index: number;
-  booking: PostBookingType;
-  onClickView: (booking: PostBookingType) => void;
-  onClickEdit: (booking: PostBookingType) => void;
-  onClickDelete: (booking: PostBookingType) => void;
+  booking: BookingType;
+  onClickView: (booking: BookingType) => void;
+  onClickEdit: (booking: BookingType) => void;
+  onClickDelete: (booking: BookingType) => void;
 };
 
 const StatusDot = ({ color, text }: { color: string; text: string }) => (
@@ -69,7 +69,7 @@ export const BookingCard = ({
           <div className="flex flex-col-reverse items-end border-b-2 border-light-grey md:items-center">
             <span className="w-auto md:w-20">{booking.startDate}</span>
             <span className="text-center rounded-sm bg-primary text-white w-20">
-              {formatCurrency(booking.price, booking.currency)}
+              {formatNumberToDollar(booking.totalPrice)}
             </span>
           </div>
         </div>
@@ -90,11 +90,7 @@ export const BookingCard = ({
           <div className="flex items-center flex-col">
             <span className="w-auto md:w-20">{booking.endDate}</span>
             <span className="w-20 text-center rounded-sm border-2 border-primary text-primary">
-              {calculateDaysDifference([booking.startDate, booking.endDate])}{" "}
-              {calculateDaysDifference([booking.startDate, booking.endDate]) ===
-              1
-                ? "day"
-                : "days"}
+              {booking.totalNights} {booking.totalNights === 1 ? "day" : "days"}
             </span>
           </div>
         </div>
