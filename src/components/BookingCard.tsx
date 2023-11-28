@@ -89,7 +89,7 @@ export const BookingCard = ({
 
           <div className="flex items-center flex-col">
             <span className="w-auto md:w-20">{booking.endDate}</span>
-            <span className="w-20 text-center rounded-sm border-2 border-primary">
+            <span className="w-20 text-center rounded-sm border-2 border-primary text-primary">
               {calculateDaysDifference([booking.startDate, booking.endDate])}{" "}
               {calculateDaysDifference([booking.startDate, booking.endDate]) ===
               1
