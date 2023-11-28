@@ -196,14 +196,7 @@ export const Bookings = () => {
           />
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 75,
-            margin: "50px 0",
-          }}
-        >
+        <div className="flex flex-col gap-10 my-12">
           {}
 
           {filteredBookings.length === 0 ? (

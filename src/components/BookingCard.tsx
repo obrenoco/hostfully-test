@@ -29,7 +29,7 @@ type BookingCardType = {
 const StatusDot = ({ color, text }: { color: string; text: string }) => (
   <div className="relative inline-block">
     <div
-      className={`w-16 h-16 rounded-full overflow-hidden border-4 border-${color} flex items-center justify-center md:w-20 md:h-20`}
+      className={`w-20 h-20 rounded-full overflow-hidden border-4 border-${color} flex items-center justify-center md:w-20 md:h-20`}
     >
       <span className={`text-sm text-${color}`}>{text}</span>
     </div>
@@ -47,7 +47,10 @@ export const BookingCard = ({
   onClickEdit,
   onClickView,
 }: BookingCardType) => (
-  <div className="flex flex-col items-center w-full gap-5" key={index}>
+  <div
+    className="flex flex-col items-center w-full gap-4 pb-10  border-b-2 border-light-grey px-4"
+    key={index}
+  >
     <div className="flex items-center w-full">
       <div className="relative mr-5 hidden md:inline-block">
         <div className="w-20 h-20 rounded-full overflow-hidden p-1 border-4 border-secondary ">
@@ -59,12 +62,12 @@ export const BookingCard = ({
         </div>
       </div>
 
-      <div className="w-full flex flex-col md:gap-2 min-w-[350px]">
+      <div className="w-full flex flex-col md:gap-2">
         <div className="flex justify-between items-center md:pb-3 md:border-b-2 md:border-light-grey">
           <span>{booking.name}</span>
 
-          <div className="flex items-center flex-col-reverse">
-            <span className="w-20">{booking.startDate}</span>
+          <div className="flex flex-col-reverse items-end border-b-2 border-light-grey md:items-center">
+            <span className="w-auto md:w-20">{booking.startDate}</span>
             <span className="text-center rounded-sm bg-secondary text-white w-20">
               {formatCurrency(booking.price, booking.currency)}
             </span>
@@ -85,7 +88,7 @@ export const BookingCard = ({
           </div>
 
           <div className="flex items-center flex-col">
-            <span className="w-20">{booking.endDate}</span>
+            <span className="w-auto md:w-20">{booking.endDate}</span>
             <span className="w-20 text-center rounded-sm border-2 border-secondary">
               {calculateDaysDifference([booking.startDate, booking.endDate])}{" "}
               {calculateDaysDifference([booking.startDate, booking.endDate]) ===
@@ -98,7 +101,7 @@ export const BookingCard = ({
       </div>
     </div>
 
-    <div className="flex items-center w-full justify-between flex-col gap-4">
+    <div className="flex items-center w-full justify-between flex-col gap-10">
       <div className="flex items-center  w-full justify-between">
         <StatusDot color="primary" text="Pending" />
         <StatusDivider />
@@ -109,19 +112,19 @@ export const BookingCard = ({
 
       <div className="flex flex-col gap-1 w-full">
         <button
-          className="bg-secondary text-white rounded-sm border-none w-full py-0.5 md:w-20"
+          className="bg-secondary text-white rounded-sm border-none w-full py-1 md:w-20"
           onClick={() => onClickView(booking)}
         >
           View
         </button>
         <button
-          className="bg-tertiary-yellow text-white rounded-sm w-full py-0.5 md:w-20"
+          className="bg-tertiary-yellow text-white rounded-sm w-full py-1 md:w-20"
           onClick={() => onClickEdit(booking)}
         >
           Edit
         </button>
         <button
-          className="bg-tertiary-orange text-white rounded-sm w-full py-0.5 md:w-20"
+          className="bg-tertiary-orange text-white rounded-sm w-full py-1 md:w-20"
           onClick={() => onClickDelete(booking)}
         >
           Delete
