@@ -14,7 +14,6 @@ import {
   generateBlockedDates,
   isOverlapingWithBlockedDates,
 } from "../utils/dates";
-import { primaryColor } from "../App";
 import { BookingCard } from "../components/BookingCard";
 import { BookingModal } from "../components/BookingModal";
 import { PostBookingType } from "../types/booking";
@@ -179,15 +178,14 @@ export const Bookings = () => {
 
   return (
     <div>
-      <section style={{ padding: "30px 60px" }}>
+      <section className="p-4">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Button
+          <button
             onClick={openCreateModal}
-            type="primary"
-            style={{ backgroundColor: primaryColor, borderRadius: 5 }}
+            className="bg-primary text-white px-3 rounded-sm"
           >
             <PlusOutlined /> New booking
-          </Button>
+          </button>
 
           <Input
             style={{ width: 200 }}
