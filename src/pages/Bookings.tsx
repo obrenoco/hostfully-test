@@ -6,8 +6,6 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import "antd/dist/antd.min.css";
-import type { RangePickerProps } from "antd/es/date-picker";
-import dayjs from "dayjs";
 import moment from "moment";
 import { BookingContext } from "../context/BookingsContext";
 import {
@@ -21,7 +19,12 @@ import { BookingCard } from "../components/BookingCard";
 import { BookingModal } from "../components/BookingModal";
 import { PostBookingType } from "../types/booking";
 
-type NotificationType = "success" | "info" | "warning" | "error";
+enum NotificationType {
+  Success = "success",
+  Info = "info",
+  Warning = "warning",
+  Error = "error",
+}
 
 enum ActionMode {
   View = 0,
@@ -74,14 +77,14 @@ export const Bookings = () => {
       price: daysDifference * dailyPrice,
     };
 
-    // try {
-    //   await form.validateFields();
-    //   addBooking(modified);
-    //   openNotificationWithIcon("success");
-    //   handleCancel();
-    // } catch (errorInfo) {
-    //   console.error("Failed:", errorInfo);
-    // }
+    try {
+      await form.validateFields();
+      addBooking(modified);
+      openNotificationWithIcon(NotificationType.Success);
+      handleCancel();
+    } catch (errorInfo) {
+      console.error("Failed:", errorInfo);
+    }
   };
 
   const onChangeDateRange = (
@@ -224,7 +227,7 @@ export const Bookings = () => {
 
       <BookingModal
         actionMode={actionMode}
-        disabledDate={() => generateBlockedDates(bookings)}
+        disabledDate={generateBlockedDates(bookings)}
         form={form}
         handleCancel={handleCancel}
         handleUpdateBooking={handleUpdateBooking}
@@ -232,7 +235,6 @@ export const Bookings = () => {
         onChangeDateRange={onChangeDateRange}
         onFinish={onFinish}
         setActionMode={setActionMode}
-        bookings={bookings}
         isSubmitButtonDisabled={isSubmitBtnDisabled}
       />
     </div>
