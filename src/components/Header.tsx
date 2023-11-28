@@ -1,41 +1,14 @@
 import { Avatar } from "antd";
+
 export const Header = () => (
-  <header
-    style={{
-      width: "100%",
-      borderBottom: "2px solid #E2E2E2",
-      height: 70,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      color: "white",
-      padding: "0 50px",
-    }}
-  >
+  <header className="w-full border-b-2 border-gray-300 h-16 flex items-center justify-between text-white px-8">
     <img
-      width="auto"
-      height="30"
+      className="h-8"
       src="https://www.hostfully.com/wp-content/uploads/2022/08/logo-1.svg"
       alt=""
-    ></img>
-    <div
-      style={{
-        display: "flex",
-        gap: 100,
-        height: "100%",
-        alignItems: "center",
-      }}
-    >
-      <button
-        style={{
-          color: "gray",
-          border: "0",
-          borderTop: "2px orange solid",
-          backgroundColor: "transparent",
-          height: "100%",
-          fontWeight: 700,
-        }}
-      >
+    />
+    <div className="flex gap-8 h-full items-center">
+      <button className="text-gray-500 border-0 border-t-2 border-orange-500 bg-transparent h-full font-bold">
         Bookings
       </button>
       <Avatar

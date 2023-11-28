@@ -107,6 +107,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       <Form
         name="create"
         onFinish={onFinish}
+        disabled={actionMode === ActionMode.View}
         initialValues={
           { currency: "USD", adults: 1, kids: 0, enfants: 0 } as PostBookingType
         }
