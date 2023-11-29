@@ -18,6 +18,7 @@ import {
 import { BookingCard } from "./components/BookingCard";
 import { BookingModal } from "./components/BookingModal";
 import { BookingType, DateRange } from "../types/booking";
+import { getAvailableProperties, getBookings } from "../api/bookings";
 
 enum NotificationType {
   Success = "success",
@@ -32,49 +33,25 @@ enum ActionMode {
   Create = 2,
 }
 
-const dataSource: BookingType[] = [
-  {
-    key: 1,
-    name: "Cabo Frio - 3 bedroom",
-    startDate: "12/01/2023",
-    endDate: "12/02/2023",
-    totalNights: 1,
-    dailyPrice: 150,
-    totalPrice: 150,
-    adults: 2,
-    kids: 3,
-    enfants: 1,
-    img: "https://viagemeturismo.abril.com.br/wp-content/uploads/2023/05/VT-Airbnb-Cabo-Frio-1.jpeg?quality=90&strip=info&w=720&crop=1",
-  },
-  {
-    key: 2,
-    name: "Cape Town with amazing view",
-    startDate: "12/12/2023",
-    endDate: "12/15/2023",
-    totalNights: 3,
-    totalPrice: 450,
-    dailyPrice: 150,
-    adults: 4,
-    kids: 0,
-    enfants: 1,
-    img: "https://a.cdn-hotels.com/gdcs/production67/d440/98ce2718-e399-48d7-867e-5a49a19d87f3.jpg",
-    observations:
-      "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
-  },
-];
-
 export const Bookings = () => {
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [actionMode, setActionMode] = useState(ActionMode.View);
   const [totalNights, setTotalNights] = useState(0);
   const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(false);
+  const [availableBookings, setAvailableBookings] = useState<BookingType[]>([]);
   const { bookings, addBooking, updateBooking, deleteBooking, setBookings } =
     useContext(BookingContext);
   const [filteredBookings, setFilteredBookings] = useState(bookings);
 
   useEffect(() => {
-    setBookings(dataSource);
+    console.log(123);
+
+    setAvailableBookings(getAvailableProperties);
+  }, []);
+
+  useEffect(() => {
+    setBookings(getBookings);
   }, [setBookings]);
 
   useEffect(() => {
@@ -100,12 +77,15 @@ export const Bookings = () => {
 
   const handleCreateBooking = async (item: BookingType & DateRange) => {
     const convertedDates = dateRangeToObject(item.dateRange);
+    console.log(item);
+
     const { dateRange, ...modified } = {
       ...item,
       key: Math.floor(Math.random() * 10 ** 10),
       startDate: convertedDates?.startDate,
       endDate: convertedDates?.endDate,
       totalPrice: item.dailyPrice * item.totalNights,
+      img: item.img,
     };
 
     console.log(modified);
@@ -262,6 +242,7 @@ export const Bookings = () => {
         setActionMode={setActionMode}
         isSubmitButtonDisabled={isSubmitBtnDisabled}
         totalNights={totalNights}
+        availableBookings={availableBookings}
       />
     </div>
   );

@@ -47,11 +47,11 @@ export const BookingCard = ({
   onClickView,
 }: BookingCardType) => (
   <div
-    className="flex flex-col items-center w-full gap-4 pb-10  border-b-2 border-light-grey"
+    className="flex flex-col items-center w-full gap-4 pb-10  border-b-2 border-light-grey laptop:flex-row"
     key={index}
   >
-    <div className="flex items-center w-full flex-col gap-4">
-      <div className="relative mr-5  md:inline-block">
+    <div className="flex items-center w-full flex-col gap-4 laptop:flex-row">
+      <div className="relative mr-5  laptop:inline-block">
         <div className="w-24 h-24 rounded-full overflow-hidden p-1 border-4 border-secondary ">
           <img
             src={booking.img || PlaceholderImage}
@@ -61,11 +61,11 @@ export const BookingCard = ({
         </div>
       </div>
 
-      <div className="w-full flex flex-col md:gap-2">
-        <div className="flex justify-between items-center md:pb-3 md:border-b-2 md:border-light-grey">
+      <div className="w-full flex flex-col laptop:gap-2">
+        <div className="flex justify-between items-center laptop:pb-3 laptop:border-b-2 laptop:border-light-grey">
           <span>{booking.name}</span>
 
-          <div className="flex flex-col-reverse items-end border-b-2 border-light-grey md:items-center">
+          <div className="flex flex-col-reverse items-end border-b-2 border-light-grey laptop:border-none laptop:items-center">
             <span className="w-auto md:w-20">{booking.startDate}</span>
             <span className="text-center rounded-sm bg-primary text-white w-20">
               {formatNumberToDollar(booking.totalPrice)}
@@ -96,7 +96,7 @@ export const BookingCard = ({
       </div>
     </div>
 
-    <div className="flex items-center w-full justify-between flex-col gap-10">
+    <div className="flex items-center w-full justify-between flex-col gap-10 laptop:flex-row">
       <div className="flex items-center  w-full justify-between">
         <StatusDot color="primary" text="Pending" />
         <StatusDivider />
@@ -105,21 +105,21 @@ export const BookingCard = ({
         <StatusDot color="light-grey" text="Stay" />
       </div>
 
-      <div className="flex flex-col gap-1 w-full">
+      <div className="flex flex-col gap-1 w-full laptop:w-20">
         <button
-          className="bg-secondary text-white rounded-sm border-none w-full py-1 md:w-20"
+          className="bg-secondary text-white rounded-sm border-none w-full py-1"
           onClick={() => onClickView(booking)}
         >
           View
         </button>
         <button
-          className="bg-tertiary-yellow text-white rounded-sm w-full py-1 md:w-20"
+          className="bg-tertiary-yellow text-white rounded-sm w-full py-1"
           onClick={() => onClickEdit(booking)}
         >
           Edit
         </button>
         <button
-          className="bg-tertiary-orange text-white rounded-sm w-full py-1 md:w-20"
+          className="bg-tertiary-orange text-white rounded-sm w-full py-1"
           onClick={() => onClickDelete(booking)}
         >
           Delete

@@ -1,7 +1,8 @@
 import { Modal, Form, Select, DatePicker, Input, Button } from "antd";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import moment from "moment";
 import { BookingType, DateRange } from "../../types/booking";
+import PlaceholderImage from "../../assets/placeholder.png";
 
 const { RangePicker } = DatePicker;
 
@@ -23,6 +24,7 @@ type BookingModalProps = {
   onFinish: (item: BookingType & DateRange) => Promise<void>;
   isSubmitButtonDisabled: boolean;
   totalNights: number;
+  availableBookings: BookingType[];
 };
 
 const guestOptions = Array.from({ length: 11 }, (_, i) => ({
@@ -45,8 +47,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   onFinish,
   isSubmitButtonDisabled,
   totalNights,
+  availableBookings,
 }) => {
-  const modalFooter = () => {
+  console.log(availableBookings);
+
+  const [selectedProperty, setSelectedProperty] = useState<BookingType>();
+
+  const ModalFooter = () => {
     switch (actionMode) {
       case ActionMode.View:
         return (
@@ -96,6 +103,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     }
   };
 
+  const onChangeProperty = (e: number) => {
+    const filtered = availableBookings.filter((property) => property.key === e);
+    setSelectedProperty(filtered[0]);
+  };
+
   return (
     <Modal
       title={
@@ -104,13 +116,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       open={isModalOpen}
       onCancel={handleCancel}
       style={{ top: 20 }}
-      footer={modalFooter()}
+      footer={ModalFooter()}
     >
       <Form
         name="create"
         onFinish={onFinish}
         disabled={actionMode === ActionMode.View}
-        initialValues={{ adults: 1, kids: 0, enfants: 0 } as BookingType}
+        initialValues={
+          {
+            adults: 1,
+            kids: 0,
+            enfants: 0,
+          } as BookingType
+        }
         form={form}
         layout="vertical"
       >
@@ -118,17 +136,42 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           <Fragment />
         </Form.Item>
 
-        <Form.Item name="adults" rules={formFieldRules} label="Adults">
-          <Select options={guestOptions.slice(1)} />
+        <Form.Item name="img">
+          <img
+            className="h-24 w-24 rounded-full m-auto"
+            alt="Property"
+            src={selectedProperty?.img || PlaceholderImage}
+          />
         </Form.Item>
 
-        <Form.Item name="kids" label="Children">
-          <Select options={guestOptions} />
+        <Form.Item name="property" rules={formFieldRules} label="Property">
+          <Select
+            onChange={onChangeProperty}
+            options={availableBookings.map((option) => ({
+              value: option.key,
+              label: option.name,
+            }))}
+          />
         </Form.Item>
 
-        <Form.Item name="enfants" label="Enfants">
-          <Select options={guestOptions} />
-        </Form.Item>
+        <div className="laptop:flex laptop:justify-between laptop:gap-3">
+          <Form.Item
+            name="adults"
+            rules={formFieldRules}
+            label="Adults"
+            className="laptop:w-full"
+          >
+            <Select options={guestOptions.slice(1)} />
+          </Form.Item>
+
+          <Form.Item name="kids" label="Children" className="laptop:w-full">
+            <Select options={guestOptions} />
+          </Form.Item>
+
+          <Form.Item name="enfants" label="Enfants" className="laptop:w-full">
+            <Select options={guestOptions} />
+          </Form.Item>
+        </div>
 
         <Form.Item
           name="dateRange"
