@@ -1,6 +1,6 @@
 import { ReactNode, createContext, Dispatch } from "react";
 import { useState } from "react";
-import { dateRangeToObject } from "../utils/dates";
+import { dateRangeToObject } from "../../../utils/dates";
 import { BookingType, DateRange } from "../types/booking";
 
 export type BookingsContextType = {

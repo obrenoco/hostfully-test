@@ -1,6 +1,6 @@
-import PlaceholderImage from "../../assets/placeholder.png";
-import { formatNumberToDollar } from "../../utils/currencies";
-import { BookingType } from "../../types/booking";
+import PlaceholderImage from "../../../assets/placeholder.png";
+import { formatNumberToDollar } from "../../../utils/currencies";
+import { BookingType } from "../types/booking";
 
 const GuestIcon = ({
   num,
@@ -20,9 +20,9 @@ const GuestIcon = ({
 type BookingCardType = {
   index: number;
   booking: BookingType;
-  onClickView: (booking: BookingType) => void;
-  onClickEdit: (booking: BookingType) => void;
-  onClickDelete: (booking: BookingType) => void;
+  onClickView: (currentooking: BookingType) => void;
+  onClickEdit: (currentooking: BookingType) => void;
+  onClickDelete: (currentooking: BookingType) => void;
 };
 
 const StatusDot = ({ color, text }: { color: string; text: string }) => (
@@ -47,7 +47,7 @@ export const BookingCard = ({
   onClickView,
 }: BookingCardType) => (
   <div
-    className="flex flex-col items-center w-full gap-4 pb-10  border-b-2 border-light-grey laptop:flex-row"
+    className="flex flex-col items-center w-full gap-4 pb-10  border-b-2 border-light-grey last:border-b-0 laptop:flex-row"
     key={index}
   >
     <div className="flex items-center w-full flex-col gap-4 laptop:flex-row">
@@ -108,7 +108,9 @@ export const BookingCard = ({
       <div className="flex flex-col gap-1 w-full laptop:w-20">
         <button
           className="bg-secondary text-white rounded-sm border-none w-full py-1"
-          onClick={() => onClickView(booking)}
+          onClick={() => {
+            onClickView(booking);
+          }}
         >
           View
         </button>

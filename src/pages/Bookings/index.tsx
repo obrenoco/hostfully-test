@@ -7,18 +7,16 @@ import {
 } from "@ant-design/icons";
 import "antd/dist/antd.min.css";
 import moment from "moment";
-import { BookingContext } from "../context/BookingsContext";
+import { BookingContext } from "./context/BookingsContext";
 import {
   calculateTotalNights,
   dateFormat,
   dateRangeToObject,
-  generateBlockedDates,
-  isOverlapingWithBlockedDates,
-} from "../utils/dates";
+} from "../../utils/dates";
 import { BookingCard } from "./components/BookingCard";
 import { BookingModal } from "./components/BookingModal";
-import { BookingType, DateRange } from "../types/booking";
-import { getAvailableProperties, getBookings } from "../api/bookings";
+import { BookingType, DateRange } from "./types/booking";
+import { getAvailableProperties, getBookings } from "./apiGetBookings";
 
 enum NotificationType {
   Success = "success",
@@ -37,16 +35,12 @@ export const Bookings = () => {
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [actionMode, setActionMode] = useState(ActionMode.View);
-  const [totalNights, setTotalNights] = useState(0);
-  const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(false);
   const [availableBookings, setAvailableBookings] = useState<BookingType[]>([]);
   const { bookings, addBooking, updateBooking, deleteBooking, setBookings } =
     useContext(BookingContext);
   const [filteredBookings, setFilteredBookings] = useState(bookings);
 
   useEffect(() => {
-    console.log(123);
-
     setAvailableBookings(getAvailableProperties);
   }, []);
 
@@ -60,7 +54,6 @@ export const Bookings = () => {
 
   const handleCancel = () => {
     form.resetFields();
-    setTotalNights(0);
     setIsModalOpen(false);
   };
 
@@ -75,51 +68,6 @@ export const Bookings = () => {
     });
   };
 
-  const handleCreateBooking = async (item: BookingType & DateRange) => {
-    const convertedDates = dateRangeToObject(item.dateRange);
-    console.log(item);
-
-    const { dateRange, ...modified } = {
-      ...item,
-      key: Math.floor(Math.random() * 10 ** 10),
-      startDate: convertedDates?.startDate,
-      endDate: convertedDates?.endDate,
-      totalPrice: item.dailyPrice * item.totalNights,
-      img: item.img,
-    };
-
-    console.log(modified);
-
-    try {
-      await form.validateFields();
-      addBooking(modified);
-      openNotificationWithIcon(NotificationType.Success);
-      handleCancel();
-    } catch (errorInfo) {
-      console.error("Failed:", errorInfo);
-    }
-  };
-
-  const onChangeDateRange = (val: DateRange["dateRange"]) => {
-    if (isOverlapingWithBlockedDates(val, bookings)) {
-      form.setFields([
-        {
-          name: "dateRange",
-          validating: false,
-          validated: false,
-          errors: ["Dates are not available"],
-        },
-      ]);
-      setIsSubmitBtnDisabled(true);
-    } else {
-      console.log(calculateTotalNights(val));
-
-      setTotalNights(calculateTotalNights(val));
-      setIsSubmitBtnDisabled(false);
-    }
-    console.log(form.getFieldError("dateRange"));
-  };
-
   const searchBooking = (e: ChangeEvent<HTMLInputElement>) => {
     const searchStr = e.target.value;
     const filteredItems = bookings.filter(
@@ -131,39 +79,21 @@ export const Bookings = () => {
     return setFilteredBookings(filteredItems || bookings);
   };
 
-  const handleUpdateBooking = () => {
-    try {
-      updateBooking(form.getFieldsValue());
-      notification.success({ message: "Booking successfully updated" });
-      setIsModalOpen(false);
-      handleCancel();
-    } catch (error) {}
-  };
-
-  const onClickView = (booking: BookingType) => {
-    form.setFieldsValue({
-      ...booking,
+  const onClickViewUpdateButton = (
+    currentBooking: BookingType,
+    action: ActionMode
+  ) => {
+    const editedField = {
+      ...currentBooking,
+      property: currentBooking.key,
+      img: currentBooking.img,
       dateRange: [
-        moment(booking.startDate, dateFormat),
-        moment(booking.endDate, dateFormat),
+        moment(currentBooking.startDate, dateFormat),
+        moment(currentBooking.endDate, dateFormat),
       ],
-    });
-    setTotalNights(booking.totalNights);
-    setActionMode(ActionMode.View);
-    setIsModalOpen(true);
-  };
-
-  const onClickEdit = (booking: BookingType) => {
-    form.setFieldsValue({
-      ...booking,
-      dateRange: [
-        moment(booking.startDate, dateFormat),
-        moment(booking.endDate, dateFormat),
-      ],
-    });
-    setTotalNights(booking.totalNights);
-    // setTotalNights(calculateTotalNights(booking));
-    setActionMode(ActionMode.Edit);
+    };
+    form.setFieldsValue(editedField);
+    setActionMode(action);
     setIsModalOpen(true);
   };
 
@@ -186,8 +116,59 @@ export const Bookings = () => {
           });
         }
       },
-      onCancel() {},
+      onCancel() {
+        setIsModalOpen(false);
+      },
     });
+  };
+
+  const handleCreateBooking = async (item: BookingType & DateRange) => {
+    const convertedDates = dateRangeToObject(item.dateRange);
+
+    const { dateRange, ...modified } = {
+      ...item,
+      key: Math.floor(Math.random() * 10 ** 10),
+      startDate: convertedDates?.startDate,
+      endDate: convertedDates?.endDate,
+      totalPrice: item.dailyPrice * item.totalNights,
+    };
+
+    console.log(form.getFieldsValue());
+
+    try {
+      await form.validateFields();
+      addBooking(modified);
+      openNotificationWithIcon(NotificationType.Success);
+      handleCancel();
+    } catch (errorInfo) {
+      console.error("Failed:", errorInfo);
+    }
+  };
+
+  const handleUpdateBooking = () => {
+    try {
+      const item: BookingType & DateRange = form.getFieldsValue();
+      console.log(
+        availableBookings.find(
+          (availableBooking) => availableBooking.key === item.key
+        )
+      );
+
+      const convertedDates = dateRangeToObject(item.dateRange);
+      const { dateRange, ...modified } = {
+        ...item,
+        key: Math.floor(Math.random() * 10 ** 10),
+        startDate: convertedDates?.startDate,
+        endDate: convertedDates?.endDate,
+        totalPrice: item.dailyPrice * calculateTotalNights(item.dateRange),
+        totalNights: calculateTotalNights(item.dateRange),
+      };
+
+      updateBooking(form.getFieldsValue());
+      notification.success({ message: "Booking successfully updated" });
+      setIsModalOpen(false);
+      handleCancel();
+    } catch (error) {}
   };
 
   return (
@@ -218,11 +199,15 @@ export const Bookings = () => {
           ) : (
             filteredBookings.map((booking, index) => (
               <BookingCard
-                booking={booking}
                 index={index}
+                booking={booking}
                 onClickDelete={onClickDelete}
-                onClickView={onClickView}
-                onClickEdit={onClickEdit}
+                onClickView={(booking) =>
+                  onClickViewUpdateButton(booking, ActionMode.View)
+                }
+                onClickEdit={(booking) =>
+                  onClickViewUpdateButton(booking, ActionMode.Edit)
+                }
                 key={booking.key}
               />
             ))
@@ -231,18 +216,15 @@ export const Bookings = () => {
       </section>
 
       <BookingModal
-        actionMode={actionMode}
-        disabledDate={generateBlockedDates(bookings)}
         form={form}
+        isModalOpen={isModalOpen}
+        actionMode={actionMode}
+        setActionMode={setActionMode}
+        bookings={bookings}
+        availableBookings={availableBookings}
+        handleCreateBooking={handleCreateBooking}
         handleCancel={handleCancel}
         handleUpdateBooking={handleUpdateBooking}
-        isModalOpen={isModalOpen}
-        onChangeDateRange={onChangeDateRange}
-        onFinish={handleCreateBooking}
-        setActionMode={setActionMode}
-        isSubmitButtonDisabled={isSubmitBtnDisabled}
-        totalNights={totalNights}
-        availableBookings={availableBookings}
       />
     </div>
   );
