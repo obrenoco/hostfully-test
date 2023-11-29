@@ -1,4 +1,3 @@
-import { calculateTotalNights } from "../../utils/dates";
 import PlaceholderImage from "../../assets/placeholder.png";
 import { formatNumberToDollar } from "../../utils/currencies";
 import { BookingType } from "../../types/booking";

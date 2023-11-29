@@ -1,6 +1,8 @@
 import moment, { Moment } from "moment";
 import { BookingType, DateRange } from "../types/booking";
 
+export const dateFormat = "MM/DD/YYYY";
+
 export function dateRangeToObject(dateRange: [moment.Moment, moment.Moment]) {
   const [startDate, endDate] = dateRange;
   const formattedStartDate = startDate.format("MM/DD/YYYY");
@@ -25,8 +27,8 @@ export const generateBlockedDates = (bookings: BookingType[]) => {
 
   bookings.forEach((booking) => {
     const { startDate, endDate } = booking;
-    const start = moment(startDate);
-    const end = moment(endDate);
+    const start = moment(startDate, dateFormat);
+    const end = moment(endDate, dateFormat);
 
     while (start.isSameOrBefore(end)) {
       blockedDates.push(start.format("MM-DD-YYYY"));
@@ -37,7 +39,7 @@ export const generateBlockedDates = (bookings: BookingType[]) => {
   return (date: Moment) => {
     const formattedDate = date.format("MM-DD-YYYY");
     return (
-      moment(formattedDate).isBefore(today) ||
+      moment(formattedDate, dateFormat).isBefore(today) ||
       blockedDates.includes(formattedDate)
     );
   };
@@ -51,10 +53,10 @@ export const isOverlapingWithBlockedDates = (
     bookingA: { startDate: moment.Moment; endDate: moment.Moment },
     bookingB: BookingType
   ): boolean => {
-    const startDateA = moment(bookingA.startDate);
-    const endDateA = moment(bookingA.endDate);
-    const startDateB = moment(bookingB.startDate);
-    const endDateB = moment(bookingB.endDate);
+    const startDateA = moment(bookingA.startDate, dateFormat);
+    const endDateA = moment(bookingA.endDate, dateFormat);
+    const startDateB = moment(bookingB.startDate, dateFormat);
+    const endDateB = moment(bookingB.endDate, dateFormat);
 
     return (
       (startDateA.isSameOrBefore(endDateB) &&

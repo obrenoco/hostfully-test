@@ -1,5 +1,5 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { Modal, Form, Empty, notification, Input, Skeleton } from "antd";
+import { Modal, Form, Empty, notification, Input } from "antd";
 import {
   SearchOutlined,
   PlusOutlined,
@@ -10,6 +10,7 @@ import moment from "moment";
 import { BookingContext } from "../context/BookingsContext";
 import {
   calculateTotalNights,
+  dateFormat,
   dateRangeToObject,
   generateBlockedDates,
   isOverlapingWithBlockedDates,
@@ -30,10 +31,6 @@ enum ActionMode {
   Edit = 1,
   Create = 2,
 }
-
-const dailyPrice = 150;
-
-const dateFormatList = ["MM/DD/YYYY", "MM/DD/YYYY"];
 
 const dataSource: BookingType[] = [
   {
@@ -167,8 +164,8 @@ export const Bookings = () => {
     form.setFieldsValue({
       ...booking,
       dateRange: [
-        moment(booking.startDate, dateFormatList[0]),
-        moment(booking.endDate, dateFormatList[0]),
+        moment(booking.startDate, dateFormat),
+        moment(booking.endDate, dateFormat),
       ],
     });
     setTotalNights(booking.totalNights);
@@ -180,8 +177,8 @@ export const Bookings = () => {
     form.setFieldsValue({
       ...booking,
       dateRange: [
-        moment(booking.startDate, dateFormatList[0]),
-        moment(booking.endDate, dateFormatList[0]),
+        moment(booking.startDate, dateFormat),
+        moment(booking.endDate, dateFormat),
       ],
     });
     setTotalNights(booking.totalNights);
