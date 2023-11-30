@@ -1,16 +1,20 @@
 import { ReactNode, createContext, Dispatch } from "react";
 import { useState } from "react";
-import { GetBookings } from "./types";
+import { GetBookings, GetHosts } from "./types";
 
 export type BookingsContextType = {
   bookings: GetBookings[];
+  hosts: GetHosts[];
   addBooking: (item: GetBookings) => void;
   updateBooking: (newItem: GetBookings) => void;
   deleteBooking: (index: number) => void;
   setBookings: Dispatch<React.SetStateAction<GetBookings[]>>;
+  setHosts: Dispatch<React.SetStateAction<GetHosts[]>>;
 };
 
 export const BookingContext = createContext<BookingsContextType>({
+  hosts: [],
+  setHosts: () => {},
   bookings: [],
   addBooking: () => {},
   updateBooking: () => {},
@@ -20,6 +24,7 @@ export const BookingContext = createContext<BookingsContextType>({
 
 export const BookingsProvider = ({ children }: { children: ReactNode }) => {
   const [bookings, setBookings] = useState<GetBookings[]>([]);
+  const [hosts, setHosts] = useState<GetHosts[]>([]);
 
   const addBooking: BookingsContextType["addBooking"] = (item) =>
     setBookings((prevBookings) => {
@@ -38,6 +43,7 @@ export const BookingsProvider = ({ children }: { children: ReactNode }) => {
             }
           : prev;
       });
+
       return updatedBookings;
     });
   };
@@ -51,6 +57,8 @@ export const BookingsProvider = ({ children }: { children: ReactNode }) => {
     <BookingContext.Provider
       value={{
         bookings,
+        hosts,
+        setHosts,
         addBooking,
         updateBooking,
         deleteBooking,

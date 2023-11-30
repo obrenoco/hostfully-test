@@ -31,21 +31,18 @@ export const Bookings = () => {
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [actionMode, setActionMode] = useState(ActionMode.View);
-  const [availableHosts, setAvailableHosts] = useState<GetHosts[]>([]);
-  const [loading, setLoading] = useState(true);
 
   const {
     bookings: contextBookings,
     addBooking,
+    setBookings,
+    hosts,
+    setHosts,
     updateBooking,
     deleteBooking,
-    setBookings,
   } = useContext(BookingContext);
-  const [filteredBookings, setFilteredBookings] = useState(contextBookings);
 
-  useEffect(() => {
-    setAvailableHosts(getHosts);
-  }, []);
+  const [filteredBookings, setFilteredBookings] = useState(contextBookings);
 
   useEffect(() => {
     setBookings(contextBookings);
@@ -53,7 +50,8 @@ export const Bookings = () => {
 
   useEffect(() => {
     setBookings(getBookings);
-  }, [setBookings]);
+    setHosts(getHosts);
+  }, [setBookings, setHosts]);
 
   useEffect(() => {
     setFilteredBookings(contextBookings);
@@ -131,6 +129,8 @@ export const Bookings = () => {
 
   const handleCreateBooking = async (item: PostBooking) => {
     try {
+      console.log(hosts);
+
       console.log(item);
       // addBooking(item);
     } catch (error) {}
@@ -217,7 +217,7 @@ export const Bookings = () => {
         actionMode={actionMode}
         setActionMode={setActionMode}
         bookings={contextBookings}
-        hosts={availableHosts}
+        hosts={hosts}
         handleCreateBooking={handleCreateBooking}
         handleCancel={handleCancel}
         handleUpdateBooking={handleUpdateBooking}
