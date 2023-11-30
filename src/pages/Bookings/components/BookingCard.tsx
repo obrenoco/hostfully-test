@@ -1,6 +1,6 @@
 import PlaceholderImage from "../../../assets/placeholder.png";
 import { formatNumberToDollar } from "../../../utils/currencies";
-import { BookingType } from "../types/booking";
+import { GetBookings } from "../api";
 
 const GuestIcon = ({
   num,
@@ -19,10 +19,10 @@ const GuestIcon = ({
 
 type BookingCardType = {
   index: number;
-  booking: BookingType;
-  onClickView: (currentooking: BookingType) => void;
-  onClickEdit: (currentooking: BookingType) => void;
-  onClickDelete: (currentooking: BookingType) => void;
+  booking: GetBookings;
+  onClickView: (currentooking: GetBookings) => void;
+  onClickEdit: (currentooking: GetBookings) => void;
+  onClickDelete: (currentooking: GetBookings) => void;
 };
 
 const StatusDot = ({ color, text }: { color: string; text: string }) => (

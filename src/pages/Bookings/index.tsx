@@ -8,15 +8,17 @@ import {
 import "antd/dist/antd.min.css";
 import moment from "moment";
 import { BookingContext } from "./context/BookingsContext";
-import {
-  calculateTotalNights,
-  dateFormat,
-  dateRangeToObject,
-} from "../../utils/dates";
+import { dateFormat, dateRangeToObject } from "../../utils/dates";
 import { BookingCard } from "./components/BookingCard";
 import { BookingModal } from "./components/BookingModal";
-import { BookingType, DateRange } from "./types/booking";
-import { getAvailableProperties, getBookings } from "./apiGetBookings";
+import { DateRange } from "./types";
+import {
+  GetBookings,
+  GetHosts,
+  PostBooking,
+  getHosts,
+  getBookings,
+} from "./api";
 
 enum NotificationType {
   Success = "success",
@@ -35,18 +37,24 @@ export const Bookings = () => {
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [actionMode, setActionMode] = useState(ActionMode.View);
-  const [availableBookings, setAvailableBookings] = useState<BookingType[]>([]);
+  const [availableHosts, setAvailableHosts] = useState<GetHosts[]>([]);
   const { bookings, addBooking, updateBooking, deleteBooking, setBookings } =
     useContext(BookingContext);
   const [filteredBookings, setFilteredBookings] = useState(bookings);
 
   useEffect(() => {
-    setAvailableBookings(getAvailableProperties);
+    setAvailableHosts(getHosts);
   }, []);
 
   useEffect(() => {
-    setBookings(getBookings);
-  }, [setBookings]);
+    if (bookings.length === 0 || getBookings === bookings) {
+      setBookings(getBookings);
+    } else {
+      console.log(bookings);
+
+      setBookings(bookings);
+    }
+  }, [bookings, setBookings]);
 
   useEffect(() => {
     setFilteredBookings(bookings);
@@ -80,12 +88,12 @@ export const Bookings = () => {
   };
 
   const onClickViewUpdateButton = (
-    currentBooking: BookingType,
+    currentBooking: GetBookings,
     action: ActionMode
   ) => {
     const editedField = {
       ...currentBooking,
-      property: currentBooking.key,
+      property: currentBooking.id,
       img: currentBooking.img,
       dateRange: [
         moment(currentBooking.startDate, dateFormat),
@@ -97,7 +105,7 @@ export const Bookings = () => {
     setIsModalOpen(true);
   };
 
-  const onClickDelete = (booking: BookingType) => {
+  const onClickDelete = (booking: GetBookings) => {
     Modal.confirm({
       title: "Are you sure delete this booking?",
       icon: <ExclamationCircleOutlined />,
@@ -106,7 +114,7 @@ export const Bookings = () => {
       cancelText: "No",
       onOk() {
         try {
-          deleteBooking(booking.key);
+          deleteBooking(booking.id);
           notification.success({
             message: "Booking successfully deleted",
           });
@@ -122,49 +130,31 @@ export const Bookings = () => {
     });
   };
 
-  const handleCreateBooking = async (item: BookingType & DateRange) => {
-    const convertedDates = dateRangeToObject(item.dateRange);
-
-    const { dateRange, ...modified } = {
-      ...item,
-      key: Math.floor(Math.random() * 10 ** 10),
-      startDate: convertedDates?.startDate,
-      endDate: convertedDates?.endDate,
-      totalPrice: item.dailyPrice * item.totalNights,
-    };
-
-    console.log(form.getFieldsValue());
-
-    try {
-      await form.validateFields();
-      addBooking(modified);
-      openNotificationWithIcon(NotificationType.Success);
-      handleCancel();
-    } catch (errorInfo) {
-      console.error("Failed:", errorInfo);
-    }
+  const handleCreateBooking = async (item: PostBooking) => {
+    // const convertedDates = dateRangeToObject(item.dateRange);
+    // const { dateRange, ...modified } = {
+    //   ...item,
+    //   key: Math.floor(Math.random() * 10 ** 10),
+    //   startDate: convertedDates?.startDate,
+    //   endDate: convertedDates?.endDate,
+    //   totalPrice: item. * item.totalNights,
+    // };
+    // console.log(form.getFieldsValue());
+    // try {
+    //   await form.validateFields();
+    //   addBooking(modified);
+    //   openNotificationWithIcon(NotificationType.Success);
+    //   handleCancel();
+    // } catch (errorInfo) {
+    //   console.error("Failed:", errorInfo);
+    // }
   };
 
   const handleUpdateBooking = () => {
     try {
-      const item: BookingType & DateRange = form.getFieldsValue();
-      console.log(
-        availableBookings.find(
-          (availableBooking) => availableBooking.key === item.key
-        )
-      );
-
-      const convertedDates = dateRangeToObject(item.dateRange);
-      const { dateRange, ...modified } = {
-        ...item,
-        key: Math.floor(Math.random() * 10 ** 10),
-        startDate: convertedDates?.startDate,
-        endDate: convertedDates?.endDate,
-        totalPrice: item.dailyPrice * calculateTotalNights(item.dateRange),
-        totalNights: calculateTotalNights(item.dateRange),
-      };
-
-      updateBooking(form.getFieldsValue());
+      const item: GetBookings & DateRange = form.getFieldsValue();
+      const { startDate, endDate } = dateRangeToObject(item.dateRange);
+      updateBooking({ ...item, startDate, endDate });
       notification.success({ message: "Booking successfully updated" });
       setIsModalOpen(false);
       handleCancel();
@@ -208,7 +198,7 @@ export const Bookings = () => {
                 onClickEdit={(booking) =>
                   onClickViewUpdateButton(booking, ActionMode.Edit)
                 }
-                key={booking.key}
+                key={booking.id}
               />
             ))
           )}
@@ -221,7 +211,7 @@ export const Bookings = () => {
         actionMode={actionMode}
         setActionMode={setActionMode}
         bookings={bookings}
-        availableBookings={availableBookings}
+        hosts={availableHosts}
         handleCreateBooking={handleCreateBooking}
         handleCancel={handleCancel}
         handleUpdateBooking={handleUpdateBooking}

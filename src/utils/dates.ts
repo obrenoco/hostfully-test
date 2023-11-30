@@ -1,5 +1,6 @@
 import moment, { Moment } from "moment";
-import { BookingType, DateRange } from "../pages/Bookings/types/booking";
+import { DateRange } from "../pages/Bookings/types";
+import { GetBookings } from "../pages/Bookings/api";
 
 export const dateFormat = "MM/DD/YYYY";
 
@@ -21,7 +22,7 @@ export const calculateTotalNights = (valueStr: DateRange["dateRange"]) => {
   return timeDifference / (1000 * 60 * 60 * 24);
 };
 
-export const generateBlockedDates = (bookings: BookingType[]) => {
+export const generateBlockedDates = (bookings: GetBookings[]) => {
   const blockedDates: string[] = [];
   const today = moment().startOf("day");
 
@@ -47,11 +48,11 @@ export const generateBlockedDates = (bookings: BookingType[]) => {
 
 export const isOverlapingWithBlockedDates = (
   dateRange: DateRange["dateRange"],
-  bookingsArray: BookingType[]
+  bookingsArray: GetBookings[]
 ): boolean => {
   const doDateRangesOverlap = (
     bookingA: { startDate: moment.Moment; endDate: moment.Moment },
-    bookingB: BookingType
+    bookingB: GetBookings
   ): boolean => {
     const startDateA = moment(bookingA.startDate, dateFormat);
     const endDateA = moment(bookingA.endDate, dateFormat);

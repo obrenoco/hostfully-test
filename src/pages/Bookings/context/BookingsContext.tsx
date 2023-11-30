@@ -1,14 +1,13 @@
 import { ReactNode, createContext, Dispatch } from "react";
 import { useState } from "react";
-import { dateRangeToObject } from "../../../utils/dates";
-import { BookingType, DateRange } from "../types/booking";
+import { GetBookings } from "../api";
 
 export type BookingsContextType = {
-  bookings: BookingType[];
-  addBooking: (item: BookingType) => void;
-  updateBooking: (newItem: BookingType & DateRange) => void;
+  bookings: GetBookings[];
+  addBooking: (item: GetBookings) => void;
+  updateBooking: (newItem: GetBookings) => void;
   deleteBooking: (index: number) => void;
-  setBookings: Dispatch<React.SetStateAction<BookingType[]>>;
+  setBookings: Dispatch<React.SetStateAction<GetBookings[]>>;
 };
 
 export const BookingContext = createContext<BookingsContextType>({
@@ -20,31 +19,33 @@ export const BookingContext = createContext<BookingsContextType>({
 });
 
 export const BookingsProvider = ({ children }: { children: ReactNode }) => {
-  const [bookings, setBookings] = useState<BookingType[]>([]);
+  const [bookings, setBookings] = useState<GetBookings[]>([]);
 
   const addBooking: BookingsContextType["addBooking"] = (item) =>
-    setBookings((prevTreasure) => [...prevTreasure, item]);
+    setBookings((prevBookings) => [...prevBookings, item]);
 
   const updateBooking: BookingsContextType["updateBooking"] = (newItem) => {
-    const newDateRange = dateRangeToObject(newItem.dateRange!);
     setBookings((prevBookings) => {
-      const updatedBookings = prevBookings.map((booking) => {
-        return booking.key === newItem.key
+      const updatedBookings: GetBookings[] = prevBookings.map((prev) => {
+        return prev.id === newItem.id
           ? {
               ...newItem,
-              startDate: newDateRange!.startDate,
-              endDate: newDateRange!.endDate,
+              id: Math.floor(Math.random() * 10 ** 10),
             }
-          : booking;
+          : prev;
       });
+
+      console.log(updatedBookings);
+
       return updatedBookings;
     });
   };
 
   const deleteBooking: BookingsContextType["deleteBooking"] = (key) =>
-    setBookings((prevBooking: BookingType[]) =>
-      [...prevBooking].filter((i) => i.key !== key)
+    setBookings((prevBooking) =>
+      [...prevBooking].filter((prev) => prev.id !== key)
     );
+
   return (
     <BookingContext.Provider
       value={{

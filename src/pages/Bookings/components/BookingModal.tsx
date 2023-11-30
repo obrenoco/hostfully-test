@@ -8,17 +8,17 @@ import {
   FormInstance,
 } from "antd";
 import { RangeValue } from "rc-picker/lib/interface";
-import { CalendarOutlined } from "@ant-design/icons";
 
 import { Fragment, useState } from "react";
 import moment from "moment";
-import { BookingType, DateRange } from "../types/booking";
+import { DateRange } from "../types";
 import PlaceholderImage from "../../../assets/placeholder.png";
 import {
   calculateTotalNights,
   generateBlockedDates,
   isOverlapingWithBlockedDates,
 } from "../../../utils/dates";
+import { GetBookings, GetHosts, PostBooking } from "../api";
 
 const { RangePicker } = DatePicker;
 
@@ -29,7 +29,7 @@ enum ActionMode {
 }
 
 enum FormField {
-  Key = "key",
+  Id = "id",
   Name = "name",
   Image = "img",
   Property = "property",
@@ -50,9 +50,9 @@ type BookingModalProps = {
   setActionMode: (value: React.SetStateAction<ActionMode>) => void;
   handleCancel: () => void;
   handleUpdateBooking: () => void;
-  handleCreateBooking: (item: BookingType & DateRange) => Promise<void>;
-  availableBookings: BookingType[];
-  bookings: BookingType[];
+  handleCreateBooking: (item: PostBooking) => Promise<void>;
+  hosts: GetHosts[];
+  bookings: GetBookings[];
 };
 
 const guestOptions = Array.from({ length: 11 }, (_, i) => ({
@@ -71,13 +71,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   handleCancel,
   handleUpdateBooking,
   handleCreateBooking,
-  availableBookings,
+  hosts,
   bookings,
 }) => {
-  const [selectedProperty, setSelectedProperty] = useState<BookingType>();
+  const [selectedProperty, setSelectedProperty] = useState<GetHosts>();
   const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(false);
-
-  console.log(bookings);
 
   const ModalFooter = () => {
     switch (actionMode) {
@@ -130,10 +128,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   };
 
   const onChangeProperty = (e: number) => {
-    const filtered = availableBookings.find((property) => property.key === e);
+    const filtered = hosts.find((property) => property.hostId === e);
     setSelectedProperty(filtered);
 
-    form.setFieldValue(FormField.Key, filtered?.key);
+    form.setFieldValue(FormField.Id, filtered?.hostId);
     form.setFieldValue(FormField.Image, filtered?.img);
     form.setFieldValue(FormField.DailyPrice, filtered?.dailyPrice);
     if (form.getFieldValue(FormField.DateRange)) {
@@ -204,12 +202,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             adults: 1,
             kids: 0,
             enfants: 0,
-          } as BookingType
+          } as GetBookings
         }
         form={form}
         layout="vertical"
       >
-        <Form.Item name={FormField.Key} hidden>
+        <Form.Item name={FormField.Id} hidden>
           <Fragment />
         </Form.Item>
 
@@ -225,21 +223,20 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           />
         </Form.Item>
 
-        {actionMode !== ActionMode.Edit && (
-          <Form.Item
-            name={FormField.Property}
-            rules={formFieldRules}
-            label="Property"
-          >
-            <Select
-              onChange={onChangeProperty}
-              options={availableBookings.map((option) => ({
-                value: option.key,
-                label: option.name,
-              }))}
-            />
-          </Form.Item>
-        )}
+        <Form.Item
+          name={FormField.Name}
+          rules={formFieldRules}
+          label="Property"
+        >
+          <Select
+            disabled={actionMode !== ActionMode.Create}
+            onChange={onChangeProperty}
+            options={hosts.map((option) => ({
+              value: option.hostId,
+              label: option.name,
+            }))}
+          />
+        </Form.Item>
 
         <div className="laptop:flex laptop:justify-between laptop:gap-3">
           <Form.Item

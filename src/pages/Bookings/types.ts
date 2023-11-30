@@ -14,3 +14,8 @@ export type BookingType = {
 };
 
 export type DateRange = { dateRange: [moment.Moment, moment.Moment] };
+
+export type DateFormatType = [
+  `${string}-${string}-${string}`,
+  `${string}-${string}-${string}`
+];
