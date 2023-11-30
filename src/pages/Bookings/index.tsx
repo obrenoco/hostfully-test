@@ -18,7 +18,6 @@ import { DateRange, GetBookings, GetHosts } from "./types";
 import { getHosts, getBookings } from "./api";
 import { BookingCard } from "./components/Card";
 import { randomNumberId } from "../../utils/number";
-import FormItem from "antd/es/form/FormItem";
 
 enum NotificationType {
   Success = "success",
@@ -46,7 +45,6 @@ export const Bookings = () => {
     setHosts,
     updateBooking,
     deleteBooking,
-    updateHost,
   } = useContext(BookingContext);
 
   const [filteredBookings, setFilteredBookings] = useState(contextBookings);
@@ -137,18 +135,6 @@ export const Bookings = () => {
 
   const handleCreateBooking = (item: BookingsFormTypes) => {
     const { startDate, endDate } = dateRangeToObject(item.dateRange);
-    // const postBody: PostBooking = {
-    //   id: randomNumberId,
-    //   hostId: item.id,
-    //   adults: item.adults,
-    //   kids: item.kids || 0,
-    //   enfants: item.enfants || 0,
-    //   startDate: startDate,
-    //   endDate: endDate,
-    //   totalPrice: item.totalPrice,
-    //   observations: item.observations || "",
-    // };
-
     const newHost: GetHosts[] = hosts.map((host) =>
       item["id"] === host.hostId
         ? {

@@ -28,8 +28,8 @@ export const getBookings: GetBookings[] = [
     kids: 0,
     enfants: 0,
     dailyPrice: 150,
-    startDate: "12-25-2023",
-    endDate: "12-30-2023",
+    startDate: "12-04-2023",
+    endDate: "12-08-2023",
     totalPrice: 600,
     blockedDates: [],
     img: "https://a.cdn-hotels.com/gdcs/production67/d440/98ce2718-e399-48d7-867e-5a49a19d87f3.jpg",
@@ -39,7 +39,7 @@ export const getBookings: GetBookings[] = [
 export const getHosts: GetHosts[] = [
   {
     hostId: 1,
-    blockedDates: [["12-04-2023", "12-08-2023"]],
+    blockedDates: [["12-18-2023", "12-23-2023"]],
     name: "Cabo Frio - 3 bedroom",
     dailyPrice: 150,
     img: "https://viagemeturismo.abril.com.br/wp-content/uploads/2023/05/VT-Airbnb-Cabo-Frio-1.jpeg?quality=90&strip=info&w=720&crop=1",
@@ -47,7 +47,7 @@ export const getHosts: GetHosts[] = [
   {
     hostId: 2,
     blockedDates: [["12-04-2023", "12-08-2023"]],
-    name: "Cape Town with amazing view",
+    name: "Rio de Janeiro",
     dailyPrice: 150,
     img: "https://a.cdn-hotels.com/gdcs/production67/d440/98ce2718-e399-48d7-867e-5a49a19d87f3.jpg",
   },
