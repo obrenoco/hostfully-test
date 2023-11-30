@@ -11,14 +11,13 @@ import { RangeValue } from "rc-picker/lib/interface";
 
 import { Fragment, useState } from "react";
 import moment from "moment";
-import { DateRange } from "../types";
+import { DateRange, GetBookings, GetHosts, PostBooking } from "../types";
 import PlaceholderImage from "../../../assets/placeholder.png";
 import {
   calculateTotalNights,
   generateBlockedDates,
   isOverlapingWithBlockedDates,
 } from "../../../utils/dates";
-import { GetBookings, GetHosts, PostBooking } from "../api";
 
 const { RangePicker } = DatePicker;
 

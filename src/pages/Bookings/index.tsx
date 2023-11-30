@@ -7,18 +7,12 @@ import {
 } from "@ant-design/icons";
 import "antd/dist/antd.min.css";
 import moment from "moment";
-import { BookingContext } from "./context/BookingsContext";
+import { BookingContext } from "./context";
 import { dateFormat, dateRangeToObject } from "../../utils/dates";
-import { BookingCard } from "./components/BookingCard";
-import { BookingModal } from "./components/BookingModal";
-import { DateRange } from "./types";
-import {
-  GetBookings,
-  GetHosts,
-  PostBooking,
-  getHosts,
-  getBookings,
-} from "./api";
+import { BookingModal } from "./components/Modal";
+import { DateRange, GetBookings, GetHosts, PostBooking } from "./types";
+import { getHosts, getBookings } from "./api";
+import { BookingCard } from "./components/Card";
 
 enum NotificationType {
   Success = "success",
@@ -131,6 +125,11 @@ export const Bookings = () => {
   };
 
   const handleCreateBooking = async (item: PostBooking) => {
+    try {
+      console.log(item);
+      // addBooking(item);
+    } catch (error) {}
+
     // const convertedDates = dateRangeToObject(item.dateRange);
     // const { dateRange, ...modified } = {
     //   ...item,

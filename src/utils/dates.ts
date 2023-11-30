@@ -1,6 +1,5 @@
 import moment, { Moment } from "moment";
-import { DateRange } from "../pages/Bookings/types";
-import { GetBookings } from "../pages/Bookings/api";
+import { DateRange, GetBookings } from "../pages/Bookings/types";
 
 export const dateFormat = "MM/DD/YYYY";
 

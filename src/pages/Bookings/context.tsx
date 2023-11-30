@@ -1,6 +1,6 @@
 import { ReactNode, createContext, Dispatch } from "react";
 import { useState } from "react";
-import { GetBookings } from "../api";
+import { GetBookings } from "./types";
 
 export type BookingsContextType = {
   bookings: GetBookings[];
@@ -22,7 +22,11 @@ export const BookingsProvider = ({ children }: { children: ReactNode }) => {
   const [bookings, setBookings] = useState<GetBookings[]>([]);
 
   const addBooking: BookingsContextType["addBooking"] = (item) =>
-    setBookings((prevBookings) => [...prevBookings, item]);
+    setBookings((prevBookings) => {
+      console.log(item);
+
+      return [...prevBookings, item];
+    });
 
   const updateBooking: BookingsContextType["updateBooking"] = (newItem) => {
     setBookings((prevBookings) => {

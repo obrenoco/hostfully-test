@@ -1,6 +1,6 @@
 import PlaceholderImage from "../../../assets/placeholder.png";
 import { formatNumberToDollar } from "../../../utils/currencies";
-import { GetBookings } from "../api";
+import { GetBookings } from "../types";
 
 const GuestIcon = ({
   num,
