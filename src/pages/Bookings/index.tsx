@@ -1,5 +1,5 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { Modal, Form, Empty, notification, Input } from "antd";
+import { Modal, Form, Empty, notification, Input, Spin } from "antd";
 import {
   SearchOutlined,
   PlusOutlined,
@@ -32,27 +32,32 @@ export const Bookings = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [actionMode, setActionMode] = useState(ActionMode.View);
   const [availableHosts, setAvailableHosts] = useState<GetHosts[]>([]);
-  const { bookings, addBooking, updateBooking, deleteBooking, setBookings } =
-    useContext(BookingContext);
-  const [filteredBookings, setFilteredBookings] = useState(bookings);
+  const [loading, setLoading] = useState(true);
+
+  const {
+    bookings: contextBookings,
+    addBooking,
+    updateBooking,
+    deleteBooking,
+    setBookings,
+  } = useContext(BookingContext);
+  const [filteredBookings, setFilteredBookings] = useState(contextBookings);
 
   useEffect(() => {
     setAvailableHosts(getHosts);
   }, []);
 
   useEffect(() => {
-    if (bookings.length === 0 || getBookings === bookings) {
-      setBookings(getBookings);
-    } else {
-      console.log(bookings);
-
-      setBookings(bookings);
-    }
-  }, [bookings, setBookings]);
+    setBookings(contextBookings);
+  }, [contextBookings, setBookings]);
 
   useEffect(() => {
-    setFilteredBookings(bookings);
-  }, [bookings]);
+    setBookings(getBookings);
+  }, [setBookings]);
+
+  useEffect(() => {
+    setFilteredBookings(contextBookings);
+  }, [contextBookings]);
 
   const handleCancel = () => {
     form.resetFields();
@@ -72,13 +77,13 @@ export const Bookings = () => {
 
   const searchBooking = (e: ChangeEvent<HTMLInputElement>) => {
     const searchStr = e.target.value;
-    const filteredItems = bookings.filter(
+    const filteredItems = contextBookings.filter(
       (booking) =>
         booking.name.toLowerCase().includes(searchStr.toLowerCase()) ||
         booking.startDate.includes(searchStr) ||
         booking.endDate.includes(searchStr)
     );
-    return setFilteredBookings(filteredItems || bookings);
+    return setFilteredBookings(filteredItems || contextBookings);
   };
 
   const onClickViewUpdateButton = (
@@ -160,6 +165,8 @@ export const Bookings = () => {
     } catch (error) {}
   };
 
+  // if (loading) return <Spin />;
+
   return (
     <div>
       <section className="py-4 px-6">
@@ -209,7 +216,7 @@ export const Bookings = () => {
         isModalOpen={isModalOpen}
         actionMode={actionMode}
         setActionMode={setActionMode}
-        bookings={bookings}
+        bookings={contextBookings}
         hosts={availableHosts}
         handleCreateBooking={handleCreateBooking}
         handleCancel={handleCancel}

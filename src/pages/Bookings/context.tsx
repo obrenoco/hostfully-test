@@ -38,9 +38,6 @@ export const BookingsProvider = ({ children }: { children: ReactNode }) => {
             }
           : prev;
       });
-
-      console.log(updatedBookings);
-
       return updatedBookings;
     });
   };
