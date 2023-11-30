@@ -5,8 +5,8 @@ export const dateFormat = "MM/DD/YYYY";
 
 export function dateRangeToObject(dateRange: [moment.Moment, moment.Moment]) {
   const [startDate, endDate] = dateRange;
-  const formattedStartDate = startDate.format("MM/DD/YYYY");
-  const formattedEndDate = endDate.format("MM/DD/YYYY");
+  const formattedStartDate = startDate.format("MM-DD-YYYY");
+  const formattedEndDate = endDate.format("MM-DD-YYYY");
 
   return {
     startDate: formattedStartDate,

@@ -1,18 +1,3 @@
-export type BookingType = {
-  key: number;
-  name: string;
-  startDate: string;
-  endDate: string;
-  totalNights: number;
-  totalPrice: number;
-  dailyPrice: number;
-  observations?: string;
-  adults: number;
-  kids: number;
-  enfants: number;
-  img: string;
-};
-
 export type GetBookings = {
   id: number;
   hostId: number;
@@ -27,17 +12,18 @@ export type GetBookings = {
   endDate: string;
   totalNights: number;
   blockedDates: [string, string][];
+  observations?: string;
 };
 
 export type PostBooking = {
   id: number;
   hostId: number;
-  startDate: moment.Moment;
-  endDate: moment.Moment;
+  startDate: string;
+  endDate: string;
   totalPrice: number;
   adults: number;
-  kids?: number;
-  enfants?: number;
+  kids: number;
+  enfants: number;
   observations?: string;
 };
 

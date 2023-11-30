@@ -1,5 +1,5 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { Modal, Form, Empty, notification, Input, Spin } from "antd";
+import { Modal, Form, Empty, notification, Input } from "antd";
 import {
   SearchOutlined,
   PlusOutlined,
@@ -9,10 +9,16 @@ import "antd/dist/antd.min.css";
 import moment from "moment";
 import { BookingContext } from "./context";
 import { dateFormat, dateRangeToObject } from "../../utils/dates";
-import { BookingModal } from "./components/Modal";
-import { DateRange, GetBookings, GetHosts, PostBooking } from "./types";
+import {
+  BookingModal,
+  BookingsFormField,
+  BookingsFormTypes,
+} from "./components/Modal";
+import { DateRange, GetBookings, GetHosts } from "./types";
 import { getHosts, getBookings } from "./api";
 import { BookingCard } from "./components/Card";
+import { randomNumberId } from "../../utils/number";
+import FormItem from "antd/es/form/FormItem";
 
 enum NotificationType {
   Success = "success",
@@ -40,6 +46,7 @@ export const Bookings = () => {
     setHosts,
     updateBooking,
     deleteBooking,
+    updateHost,
   } = useContext(BookingContext);
 
   const [filteredBookings, setFilteredBookings] = useState(contextBookings);
@@ -59,6 +66,7 @@ export const Bookings = () => {
 
   const handleCancel = () => {
     form.resetFields();
+    form.setFieldValue(BookingsFormField.Image, "");
     setIsModalOpen(false);
   };
 
@@ -127,31 +135,54 @@ export const Bookings = () => {
     });
   };
 
-  const handleCreateBooking = async (item: PostBooking) => {
-    try {
-      console.log(hosts);
-
-      console.log(item);
-      // addBooking(item);
-    } catch (error) {}
-
-    // const convertedDates = dateRangeToObject(item.dateRange);
-    // const { dateRange, ...modified } = {
-    //   ...item,
-    //   key: Math.floor(Math.random() * 10 ** 10),
-    //   startDate: convertedDates?.startDate,
-    //   endDate: convertedDates?.endDate,
-    //   totalPrice: item. * item.totalNights,
+  const handleCreateBooking = (item: BookingsFormTypes) => {
+    const { startDate, endDate } = dateRangeToObject(item.dateRange);
+    // const postBody: PostBooking = {
+    //   id: randomNumberId,
+    //   hostId: item.id,
+    //   adults: item.adults,
+    //   kids: item.kids || 0,
+    //   enfants: item.enfants || 0,
+    //   startDate: startDate,
+    //   endDate: endDate,
+    //   totalPrice: item.totalPrice,
+    //   observations: item.observations || "",
     // };
-    // console.log(form.getFieldsValue());
-    // try {
-    //   await form.validateFields();
-    //   addBooking(modified);
-    //   openNotificationWithIcon(NotificationType.Success);
-    //   handleCancel();
-    // } catch (errorInfo) {
-    //   console.error("Failed:", errorInfo);
-    // }
+
+    const newHost: GetHosts[] = hosts.map((host) =>
+      item["id"] === host.hostId
+        ? {
+            ...host,
+            blockedDates: [...host.blockedDates, [startDate, endDate]],
+          }
+        : host
+    );
+
+    const newBooking: GetBookings = {
+      id: randomNumberId(),
+      hostId: item.id,
+      blockedDates: [...item.blockedDates, [startDate, endDate]],
+      dailyPrice: item.dailyPrice,
+      startDate: startDate,
+      endDate: endDate,
+      adults: item.adults,
+      kids: item.kids,
+      enfants: item.enfants,
+      img: item.img,
+      name: hosts.find((host) => host.hostId === item.id)!.name,
+      totalNights: item.totalNights,
+      totalPrice: item.totalPrice,
+      observations: item.observations,
+    };
+
+    try {
+      addBooking(newBooking);
+      setHosts(newHost);
+      openNotificationWithIcon(NotificationType.Success);
+      handleCancel();
+    } catch (error) {
+      console.error("Failed:", error);
+    }
   };
 
   const handleUpdateBooking = () => {
@@ -165,11 +196,9 @@ export const Bookings = () => {
     } catch (error) {}
   };
 
-  // if (loading) return <Spin />;
-
   return (
     <div>
-      <section className="py-4 px-6">
+      <section className="py-4 px-6 laptop:w-[85%] mx-auto">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <button
             onClick={openCreateModal}

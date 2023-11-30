@@ -27,11 +27,10 @@ enum ActionMode {
   Create = 2,
 }
 
-enum FormField {
+export enum BookingsFormField {
   Id = "id",
   Name = "name",
   Image = "img",
-  Property = "property",
   Adults = "adults",
   Kids = "kids",
   Enfants = "enfants",
@@ -43,14 +42,35 @@ enum FormField {
   BlockedDates = "blockedDates",
 }
 
+export type BookingsFormTypes = {
+  [BookingsFormField.Id]: GetBookings["id"];
+  [BookingsFormField.Name]: GetBookings["name"] | GetHosts["name"];
+  [BookingsFormField.Image]: GetBookings["img"] | GetHosts["img"];
+  [BookingsFormField.Adults]: GetBookings["adults"] | PostBooking["adults"];
+  [BookingsFormField.Kids]: GetBookings["kids"] | PostBooking["kids"];
+  [BookingsFormField.Enfants]: GetBookings["enfants"] | PostBooking["enfants"];
+  [BookingsFormField.DateRange]: DateRange["dateRange"];
+  [BookingsFormField.TotalNights]: GetBookings["totalNights"];
+  [BookingsFormField.DailyPrice]:
+    | GetBookings["dailyPrice"]
+    | GetHosts["dailyPrice"];
+  [BookingsFormField.TotalPrice]:
+    | GetBookings["totalPrice"]
+    | PostBooking["totalPrice"];
+  [BookingsFormField.Observations]: PostBooking["observations"];
+  [BookingsFormField.BlockedDates]:
+    | GetBookings["blockedDates"]
+    | GetHosts["blockedDates"];
+};
+
 type BookingModalProps = {
   isModalOpen: boolean;
-  form: FormInstance<any>;
+  form: FormInstance<BookingsFormTypes>;
   actionMode: ActionMode;
   setActionMode: (value: React.SetStateAction<ActionMode>) => void;
   handleCancel: () => void;
   handleUpdateBooking: () => void;
-  handleCreateBooking: (item: PostBooking) => Promise<void>;
+  handleCreateBooking: (item: BookingsFormTypes) => void;
   hosts: GetHosts[];
   bookings: GetBookings[];
 };
@@ -76,7 +96,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 }) => {
   const [selectedProperty, setSelectedProperty] = useState<GetHosts>();
   const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(false);
-
   const ModalFooter = () => {
     switch (actionMode) {
       case ActionMode.View:
@@ -127,26 +146,30 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     }
   };
 
-  const onChangeProperty = (e: number) => {
+  const onChangeHost = (e: number) => {
     const filtered = hosts.find((property) => property.hostId === e);
     setSelectedProperty(filtered);
 
-    form.setFieldValue(FormField.Id, filtered?.hostId);
-    form.setFieldValue(FormField.Image, filtered?.img);
-    form.setFieldValue(FormField.DailyPrice, filtered?.dailyPrice);
-    if (form.getFieldValue(FormField.DateRange)) {
+    form.setFieldValue(BookingsFormField.Id, filtered?.hostId);
+    form.setFieldValue(BookingsFormField.Image, filtered?.img);
+    form.setFieldValue(BookingsFormField.DailyPrice, filtered?.dailyPrice);
+    console.log(form.getFieldValue(BookingsFormField.Name));
+
+    form.setFieldValue(BookingsFormField.BlockedDates, filtered?.blockedDates);
+
+    if (form.getFieldValue(BookingsFormField.DateRange)) {
       form.setFieldValue(
-        FormField.TotalNights,
-        calculateTotalNights(form.getFieldValue(FormField.DateRange))
+        BookingsFormField.TotalNights,
+        calculateTotalNights(form.getFieldValue(BookingsFormField.DateRange))
       );
       form.setFieldValue(
-        FormField.TotalPrice,
-        form.getFieldValue(FormField.DailyPrice) *
-          calculateTotalNights(form.getFieldValue(FormField.DateRange))
+        BookingsFormField.TotalPrice,
+        form.getFieldValue(BookingsFormField.DailyPrice) *
+          calculateTotalNights(form.getFieldValue(BookingsFormField.DateRange))
       );
     } else {
-      form.setFieldValue(FormField.TotalNights, 0);
-      form.setFieldValue(FormField.TotalPrice, 0);
+      form.setFieldValue(BookingsFormField.TotalNights, 0);
+      form.setFieldValue(BookingsFormField.TotalPrice, 0);
     }
   };
 
@@ -155,24 +178,24 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     const val: DateRange["dateRange"] = [values[0], values[1]];
 
     form.setFieldValue(
-      FormField.TotalNights,
-      calculateTotalNights(form.getFieldValue(FormField.DateRange))
+      BookingsFormField.TotalNights,
+      calculateTotalNights(form.getFieldValue(BookingsFormField.DateRange))
     );
     form.setFieldValue(
-      FormField.TotalPrice,
-      form.getFieldValue(FormField.DailyPrice) *
-        calculateTotalNights(form.getFieldValue(FormField.DateRange))
+      BookingsFormField.TotalPrice,
+      form.getFieldValue(BookingsFormField.DailyPrice) *
+        calculateTotalNights(form.getFieldValue(BookingsFormField.DateRange))
     );
 
     if (
       isOverlapingWithBlockedDates(
         val,
-        form.getFieldValue(FormField.BlockedDates) || []
+        form.getFieldValue(BookingsFormField.BlockedDates) || []
       )
     ) {
       form.setFields([
         {
-          name: FormField.DateRange,
+          name: BookingsFormField.DateRange,
           validating: false,
           validated: false,
           errors: ["Dates are not available"],
@@ -186,7 +209,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   };
 
   const bookingBlockedDates: GetBookings["blockedDates"] =
-    form.getFieldValue(FormField.BlockedDates) || [];
+    form.getFieldValue(BookingsFormField.BlockedDates) || [];
 
   return (
     <Modal
@@ -215,16 +238,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         form={form}
         layout="vertical"
       >
-        <Form.Item name={FormField.Id} hidden>
+        <Form.Item name={BookingsFormField.Id} hidden>
           <Fragment />
         </Form.Item>
 
-        <Form.Item name={FormField.Image}>
+        <Form.Item name={BookingsFormField.Image}>
           <img
             className="h-24 w-24 rounded-full m-auto"
             alt="Property"
             src={
-              form.getFieldValue(FormField.Image) ||
+              form.getFieldValue(BookingsFormField.Image) ||
               selectedProperty?.img ||
               PlaceholderImage
             }
@@ -232,13 +255,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         </Form.Item>
 
         <Form.Item
-          name={FormField.Name}
+          name={BookingsFormField.Name}
           rules={formFieldRules}
-          label="Property"
+          label="Name"
         >
           <Select
             disabled={actionMode !== ActionMode.Create}
-            onChange={onChangeProperty}
+            onChange={onChangeHost}
             options={hosts.map((option) => ({
               value: option.hostId,
               label: option.name,
@@ -248,7 +271,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
         <div className="laptop:flex laptop:justify-between laptop:gap-3">
           <Form.Item
-            name={FormField.Adults}
+            name={BookingsFormField.Adults}
             rules={formFieldRules}
             label="Adults"
             className="laptop:w-full"
@@ -257,7 +280,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           </Form.Item>
 
           <Form.Item
-            name={FormField.Kids}
+            name={BookingsFormField.Kids}
             label="Children"
             className="laptop:w-full"
           >
@@ -265,7 +288,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           </Form.Item>
 
           <Form.Item
-            name={FormField.Enfants}
+            name={BookingsFormField.Enfants}
             label="Enfants"
             className="laptop:w-full"
           >
@@ -274,7 +297,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         </div>
 
         <Form.Item
-          name={FormField.DateRange}
+          name={BookingsFormField.DateRange}
           rules={formFieldRules}
           label="Arrival / Depart"
         >
@@ -287,15 +310,15 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           />
         </Form.Item>
 
-        <Form.Item name={FormField.BlockedDates} hidden>
+        <Form.Item name={BookingsFormField.BlockedDates} hidden>
           <Fragment />
         </Form.Item>
 
         <div className="flex items-center flex-col laptop:flex-row laptop:gap-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center w-full gap-2">
             <Form.Item
               label={"Nights"}
-              name={FormField.TotalNights}
+              name={BookingsFormField.TotalNights}
               className="w-full"
             >
               <Input disabled />
@@ -305,7 +328,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
             <Form.Item
               label="Daily price"
-              name={FormField.DailyPrice}
+              name={BookingsFormField.DailyPrice}
               className="w-full"
             >
               <Input prefix="$" disabled />
@@ -316,14 +339,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
           <Form.Item
             label="Total price"
-            name={FormField.TotalPrice}
+            name={BookingsFormField.TotalPrice}
             className="w-full"
           >
             <Input prefix="$" disabled />
           </Form.Item>
         </div>
 
-        <Form.Item name={FormField.Observations} label="Observations">
+        <Form.Item name={BookingsFormField.Observations} label="Observations">
           <Input.TextArea
             rows={4}
             maxLength={200}

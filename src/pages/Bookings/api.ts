@@ -74,7 +74,7 @@ export const getHosts: GetHosts[] = [
   },
   {
     hostId: 6,
-    blockedDates: [["12-04-2023", "12-08-2023"]],
+    blockedDates: [["12-07-2023", "12-14-2023"]],
     name: "Mountain Cabin",
     dailyPrice: 120,
     img: "https://mountaincabinsutah.com/wp-content/uploads/2018/06/Mountain-Cabins-Utah-Log-Cabin-vacation-rental-sundance-ut.jpg",

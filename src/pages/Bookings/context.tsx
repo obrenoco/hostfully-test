@@ -5,6 +5,7 @@ import { GetBookings, GetHosts } from "./types";
 export type BookingsContextType = {
   bookings: GetBookings[];
   hosts: GetHosts[];
+  updateHost: (newItem: GetHosts) => void;
   addBooking: (item: GetBookings) => void;
   updateBooking: (newItem: GetBookings) => void;
   deleteBooking: (index: number) => void;
@@ -15,6 +16,7 @@ export type BookingsContextType = {
 export const BookingContext = createContext<BookingsContextType>({
   hosts: [],
   setHosts: () => {},
+  updateHost: () => {},
   bookings: [],
   addBooking: () => {},
   updateBooking: () => {},
@@ -53,6 +55,20 @@ export const BookingsProvider = ({ children }: { children: ReactNode }) => {
       [...prevBooking].filter((prev) => prev.id !== key)
     );
 
+  const updateHost: BookingsContextType["updateHost"] = (newItem) => {
+    setHosts((prevHosts) => {
+      const updatedHost: GetHosts[] = prevHosts.map((prev) => {
+        console.log(prev);
+
+        return JSON.stringify(prev) === JSON.stringify(newItem)
+          ? prev
+          : newItem;
+      });
+
+      return updatedHost;
+    });
+  };
+
   return (
     <BookingContext.Provider
       value={{
@@ -62,6 +78,7 @@ export const BookingsProvider = ({ children }: { children: ReactNode }) => {
         addBooking,
         updateBooking,
         deleteBooking,
+        updateHost,
         setBookings,
       }}
     >
