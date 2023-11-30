@@ -168,7 +168,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     if (
       isOverlapingWithBlockedDates(
         val,
-        form.getFieldValue(FormField.BlockedDates)
+        form.getFieldValue(FormField.BlockedDates) || []
       )
     ) {
       form.setFields([
