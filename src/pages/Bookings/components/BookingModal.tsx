@@ -41,6 +41,7 @@ enum FormField {
   DailyPrice = "dailyPrice",
   TotalPrice = "totalPrice",
   Observations = "observations",
+  BlockedDates = "blockedDates",
 }
 
 type BookingModalProps = {
@@ -164,7 +165,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         calculateTotalNights(form.getFieldValue(FormField.DateRange))
     );
 
-    if (isOverlapingWithBlockedDates(val, bookings)) {
+    if (
+      isOverlapingWithBlockedDates(
+        val,
+        form.getFieldValue(FormField.BlockedDates)
+      )
+    ) {
       form.setFields([
         {
           name: FormField.DateRange,
@@ -179,6 +185,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       setIsSubmitBtnDisabled(false);
     }
   };
+
+  const bookingBlockedDates: GetBookings["blockedDates"] =
+    form.getFieldValue(FormField.BlockedDates) || [];
 
   return (
     <Modal
@@ -271,12 +280,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           label="Arrival / Depart"
         >
           <RangePicker
-            disabledDate={generateBlockedDates(bookings)}
+            disabledDate={generateBlockedDates(bookingBlockedDates)}
             aria-required
             onChange={onChangeDateRange}
             format={dateFormatList}
             className="w-full"
           />
+        </Form.Item>
+
+        <Form.Item name={FormField.BlockedDates} hidden>
+          <Fragment />
         </Form.Item>
 
         <div className="flex items-center flex-col laptop:flex-row laptop:gap-2">

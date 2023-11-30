@@ -22,12 +22,15 @@ export const calculateTotalNights = (valueStr: DateRange["dateRange"]) => {
   return timeDifference / (1000 * 60 * 60 * 24);
 };
 
-export const generateBlockedDates = (bookings: GetBookings[]) => {
+export const generateBlockedDates = (
+  bookings?: GetBookings["blockedDates"]
+) => {
+  if (!bookings) return;
   const blockedDates: string[] = [];
   const today = moment().startOf("day");
 
   bookings.forEach((booking) => {
-    const { startDate, endDate } = booking;
+    const [startDate, endDate] = booking;
     const start = moment(startDate, dateFormat);
     const end = moment(endDate, dateFormat);
 
@@ -48,16 +51,16 @@ export const generateBlockedDates = (bookings: GetBookings[]) => {
 
 export const isOverlapingWithBlockedDates = (
   dateRange: DateRange["dateRange"],
-  bookingsArray: GetBookings[]
+  bookingsArray: [string, string][]
 ): boolean => {
   const doDateRangesOverlap = (
     bookingA: { startDate: moment.Moment; endDate: moment.Moment },
-    bookingB: GetBookings
+    bookingB: [string, string]
   ): boolean => {
     const startDateA = moment(bookingA.startDate, dateFormat);
     const endDateA = moment(bookingA.endDate, dateFormat);
-    const startDateB = moment(bookingB.startDate, dateFormat);
-    const endDateB = moment(bookingB.endDate, dateFormat);
+    const startDateB = moment(bookingB[0], dateFormat);
+    const endDateB = moment(bookingB[1], dateFormat);
 
     return (
       (startDateA.isSameOrBefore(endDateB) &&
@@ -68,7 +71,10 @@ export const isOverlapingWithBlockedDates = (
   };
 
   const [start, end] = dateRange;
-  const targetBooking = { startDate: start, endDate: end };
+  const targetBooking = {
+    startDate: moment(start, dateFormat),
+    endDate: moment(end, dateFormat),
+  };
 
   return bookingsArray.some((booking) =>
     doDateRangesOverlap(targetBooking, booking)

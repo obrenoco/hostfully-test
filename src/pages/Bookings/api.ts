@@ -47,7 +47,7 @@ export const getBookings: GetBookings[] = [
     img: "https://viagemeturismo.abril.com.br/wp-content/uploads/2023/05/VT-Airbnb-Cabo-Frio-1.jpeg?quality=90&strip=info&w=720&crop=1",
     blockedDates: [
       ["12-12-2023", "12-14-2023"],
-      ["12-18-2023", "12-22-2023"],
+      ["12-26-2023", "12-28-2023"],
     ],
   },
   {
@@ -62,7 +62,7 @@ export const getBookings: GetBookings[] = [
     startDate: "12-25-2023",
     endDate: "12-30-2023",
     totalPrice: 600,
-    blockedDates: [["12-25-2023", "12-30-2023"]],
+    blockedDates: [],
     img: "https://a.cdn-hotels.com/gdcs/production67/d440/98ce2718-e399-48d7-867e-5a49a19d87f3.jpg",
   },
 ];
