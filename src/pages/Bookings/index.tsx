@@ -17,7 +17,7 @@ import {
 import { DateRange, GetBookings, GetHosts } from "./types";
 import { getHosts, getBookings } from "./api";
 import { BookingCard } from "./components/Card";
-import { randomNumberId } from "../../utils/number";
+import { generateRandomNumberId } from "../../utils/number";
 
 enum NotificationType {
   Success = "success",
@@ -58,6 +58,8 @@ export const Bookings = () => {
     setHosts(getHosts);
   }, [setBookings, setHosts]);
 
+  console.log(hosts);
+
   useEffect(() => {
     setFilteredBookings(contextBookings);
   }, [contextBookings]);
@@ -94,10 +96,12 @@ export const Bookings = () => {
     currentBooking: GetBookings,
     action: ActionMode
   ) => {
+    const hostssss = hosts.find((x) => currentBooking.hostId === x.hostId);
     const editedField = {
       ...currentBooking,
       property: currentBooking.id,
       img: currentBooking.img,
+      blockedDates: hostssss?.blockedDates,
       dateRange: [
         moment(currentBooking.startDate, dateFormat),
         moment(currentBooking.endDate, dateFormat),
@@ -117,7 +121,7 @@ export const Bookings = () => {
       cancelText: "No",
       onOk() {
         try {
-          deleteBooking(booking.id);
+          deleteBooking(booking);
           notification.success({
             message: "Booking successfully deleted",
           });
@@ -145,7 +149,7 @@ export const Bookings = () => {
     );
 
     const newBooking: GetBookings = {
-      id: randomNumberId(),
+      id: generateRandomNumberId(),
       hostId: item.id,
       blockedDates: [...item.blockedDates, [startDate, endDate]],
       dailyPrice: item.dailyPrice,

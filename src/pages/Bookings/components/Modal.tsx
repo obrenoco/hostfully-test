@@ -40,6 +40,7 @@ export enum BookingsFormField {
   TotalPrice = "totalPrice",
   Observations = "observations",
   BlockedDates = "blockedDates",
+  HostId = "hostId",
 }
 
 export type BookingsFormTypes = {
@@ -149,12 +150,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const onChangeHost = (e: number) => {
     const filtered = hosts.find((property) => property.hostId === e);
     setSelectedProperty(filtered);
-
     form.setFieldValue(BookingsFormField.Id, filtered?.hostId);
+    form.setFieldValue(BookingsFormField.HostId, filtered?.hostId);
     form.setFieldValue(BookingsFormField.Image, filtered?.img);
     form.setFieldValue(BookingsFormField.DailyPrice, filtered?.dailyPrice);
-    console.log(form.getFieldValue(BookingsFormField.Name));
-
     form.setFieldValue(BookingsFormField.BlockedDates, filtered?.blockedDates);
 
     if (form.getFieldValue(BookingsFormField.DateRange)) {
@@ -213,6 +212,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   return (
     <Modal
+      forceRender
       title={
         actionMode === ActionMode.Create ? "New booking" : "Update booking"
       }
@@ -267,6 +267,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               label: option.name,
             }))}
           />
+        </Form.Item>
+
+        <Form.Item name={BookingsFormField.HostId} hidden>
+          <Fragment />
         </Form.Item>
 
         <div className="laptop:flex laptop:justify-between laptop:gap-3">

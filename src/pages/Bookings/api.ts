@@ -14,10 +14,7 @@ export const getBookings: GetBookings[] = [
     totalNights: 5,
     totalPrice: 650,
     img: "https://viagemeturismo.abril.com.br/wp-content/uploads/2023/05/VT-Airbnb-Cabo-Frio-1.jpeg?quality=90&strip=info&w=720&crop=1",
-    blockedDates: [
-      ["12-12-2023", "12-14-2023"],
-      ["12-26-2023", "12-28-2023"],
-    ],
+    blockedDates: [["12-12-2023", "12-14-2023"]],
   },
   {
     id: 2,
