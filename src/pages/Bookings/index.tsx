@@ -18,7 +18,7 @@ import {
   NotificationType,
 } from "./types";
 import { BookingCard } from "./components/Card";
-import { generateRandomNumberId } from "../../utils/number";
+import { generateRandomNumberId } from "../../utils/numbers";
 import { useBookingData } from "./hooks";
 import { BookingsHeader } from "./components/Header";
 

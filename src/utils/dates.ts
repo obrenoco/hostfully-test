@@ -42,8 +42,10 @@ export const generateBlockedDates = (
   return (date: Moment) => {
     const formattedDate = date.format(calendarDateFormat);
     return (
-      moment(formattedDate, calendarDateFormat).isBefore(today) ||
-      blockedDates.includes(formattedDate)
+      moment(formattedDate, calendarDateFormat).isBefore(today, "day") ||
+      blockedDates.some((blockedDate) =>
+        moment(blockedDate, calendarDateFormat).isSame(date, "day")
+      )
     );
   };
 };

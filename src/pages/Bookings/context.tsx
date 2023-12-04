@@ -1,7 +1,7 @@
 import { ReactNode, createContext, Dispatch } from "react";
 import { useState } from "react";
 import { DateRange, GetBookings, GetHosts } from "./types";
-import { generateRandomNumberId } from "../../utils/number";
+import { generateRandomNumberId } from "../../utils/numbers";
 
 export type BookingsContextType = {
   bookings: GetBookings[];
