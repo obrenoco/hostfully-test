@@ -1,17 +1,14 @@
 import { useContext, useEffect, useState } from "react";
-import { Modal, Form, Empty, notification } from "antd";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { Form, Empty, notification } from "antd";
 import "antd/dist/antd.min.css";
 import moment from "moment";
 import { BookingContext } from "./context";
 import { calendarDateFormat, dateRangeToObject } from "../../utils/dates";
-import {
-  BookingModal,
-  BookingsFormFields,
-  BookingsFormTypes,
-} from "./components/Modal";
+import { CreateUpdateBookingModal } from "./components/Modal";
 import {
   ActionMode,
+  BookingsFormFields,
+  BookingsFormTypes,
   DateRange,
   GetBookings,
   GetHosts,
@@ -83,29 +80,17 @@ export const Bookings = () => {
     setIsModalOpen(true);
   };
 
-  const onClickDelete = (booking: GetBookings) => {
-    Modal.confirm({
-      title: "Are you sure delete this booking?",
-      icon: <ExclamationCircleOutlined />,
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      onOk() {
-        try {
-          deleteBooking(booking);
-          notification.success({
-            message: "Booking successfully deleted",
-          });
-        } catch (error) {
-          notification.error({
-            message: "Couldn't delete booking. Try again later.",
-          });
-        }
-      },
-      onCancel() {
-        setIsModalOpen(false);
-      },
-    });
+  const handleDeleteBooking = (booking: GetBookings) => {
+    try {
+      deleteBooking(booking);
+      notification.success({
+        message: "Booking successfully deleted",
+      });
+    } catch (error) {
+      notification.error({
+        message: "Couldn't delete booking. Try again later.",
+      });
+    }
   };
 
   const handleCreateBooking = (item: BookingsFormTypes) => {
@@ -177,7 +162,7 @@ export const Bookings = () => {
                   <BookingCard
                     index={index}
                     booking={booking}
-                    onClickDelete={onClickDelete}
+                    handleDeleteBooking={handleDeleteBooking}
                     onClickView={(booking) =>
                       onClickViewUpdateButton(booking, ActionMode.View)
                     }
@@ -192,7 +177,7 @@ export const Bookings = () => {
         </div>
       </section>
 
-      <BookingModal
+      <CreateUpdateBookingModal
         form={form}
         isModalOpen={isModalOpen}
         actionMode={actionMode}

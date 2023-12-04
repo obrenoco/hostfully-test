@@ -51,3 +51,40 @@ export enum ActionMode {
   Edit = 1,
   Create = 2,
 }
+
+export enum BookingsFormFields {
+  Id = "id",
+  Name = "name",
+  Image = "img",
+  Adults = "adults",
+  Kids = "kids",
+  Enfants = "enfants",
+  DateRange = "dateRange",
+  TotalNights = "totalNights",
+  DailyPrice = "dailyPrice",
+  TotalPrice = "totalPrice",
+  Observations = "observations",
+  BlockedDates = "blockedDates",
+  HostId = "hostId",
+}
+
+export type BookingsFormTypes = {
+  [BookingsFormFields.Id]: GetBookings["id"];
+  [BookingsFormFields.Name]: GetBookings["name"] | GetHosts["name"];
+  [BookingsFormFields.Image]: GetBookings["img"] | GetHosts["img"];
+  [BookingsFormFields.Adults]: GetBookings["adults"] | PostBooking["adults"];
+  [BookingsFormFields.Kids]: GetBookings["kids"] | PostBooking["kids"];
+  [BookingsFormFields.Enfants]: GetBookings["enfants"] | PostBooking["enfants"];
+  [BookingsFormFields.DateRange]: DateRange["dateRange"];
+  [BookingsFormFields.TotalNights]: GetBookings["totalNights"];
+  [BookingsFormFields.DailyPrice]:
+    | GetBookings["dailyPrice"]
+    | GetHosts["dailyPrice"];
+  [BookingsFormFields.TotalPrice]:
+    | GetBookings["totalPrice"]
+    | PostBooking["totalPrice"];
+  [BookingsFormFields.Observations]: PostBooking["observations"];
+  [BookingsFormFields.BlockedDates]:
+    | GetBookings["blockedDates"]
+    | GetHosts["blockedDates"];
+};

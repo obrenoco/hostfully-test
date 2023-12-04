@@ -13,10 +13,11 @@ import { Fragment, useState } from "react";
 import moment from "moment";
 import {
   ActionMode,
+  BookingsFormFields,
+  BookingsFormTypes,
   DateRange,
   GetBookings,
   GetHosts,
-  PostBooking,
 } from "../types";
 import PlaceholderImage from "../../../assets/placeholder.png";
 import {
@@ -25,43 +26,6 @@ import {
   generateBlockedDates,
   isOverlapingWithBlockedDates,
 } from "../../../utils/dates";
-
-export enum BookingsFormFields {
-  Id = "id",
-  Name = "name",
-  Image = "img",
-  Adults = "adults",
-  Kids = "kids",
-  Enfants = "enfants",
-  DateRange = "dateRange",
-  TotalNights = "totalNights",
-  DailyPrice = "dailyPrice",
-  TotalPrice = "totalPrice",
-  Observations = "observations",
-  BlockedDates = "blockedDates",
-  HostId = "hostId",
-}
-
-export type BookingsFormTypes = {
-  [BookingsFormFields.Id]: GetBookings["id"];
-  [BookingsFormFields.Name]: GetBookings["name"] | GetHosts["name"];
-  [BookingsFormFields.Image]: GetBookings["img"] | GetHosts["img"];
-  [BookingsFormFields.Adults]: GetBookings["adults"] | PostBooking["adults"];
-  [BookingsFormFields.Kids]: GetBookings["kids"] | PostBooking["kids"];
-  [BookingsFormFields.Enfants]: GetBookings["enfants"] | PostBooking["enfants"];
-  [BookingsFormFields.DateRange]: DateRange["dateRange"];
-  [BookingsFormFields.TotalNights]: GetBookings["totalNights"];
-  [BookingsFormFields.DailyPrice]:
-    | GetBookings["dailyPrice"]
-    | GetHosts["dailyPrice"];
-  [BookingsFormFields.TotalPrice]:
-    | GetBookings["totalPrice"]
-    | PostBooking["totalPrice"];
-  [BookingsFormFields.Observations]: PostBooking["observations"];
-  [BookingsFormFields.BlockedDates]:
-    | GetBookings["blockedDates"]
-    | GetHosts["blockedDates"];
-};
 
 type BookingModalProps = {
   isModalOpen: boolean;
@@ -82,6 +46,13 @@ type ModalFooterProps = {
   isSubmitBtnDisabled: boolean;
 };
 
+type DeleteBookingModalProps = {
+  isModalOpen: boolean;
+  setIsModalOpen: (value: React.SetStateAction<boolean>) => void;
+  handleDeleteBooking: (booking: GetBookings) => void;
+  booking: GetBookings;
+};
+
 const guestOptions = Array.from({ length: 11 }, (_, i) => ({
   value: i,
   label: i,
@@ -89,7 +60,7 @@ const guestOptions = Array.from({ length: 11 }, (_, i) => ({
 
 const formFieldRules = [{ required: true, message: "This field is required." }];
 
-const ModalFooter = ({
+const CreateUpdateModalFooter = ({
   actionMode,
   setActionMode,
   handleCancel,
@@ -145,7 +116,7 @@ const ModalFooter = ({
   }
 };
 
-export const BookingModal: React.FC<BookingModalProps> = ({
+export const CreateUpdateBookingModal: React.FC<BookingModalProps> = ({
   isModalOpen,
   form,
   actionMode,
@@ -238,7 +209,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         setSelectedProperty(undefined);
       }}
       className="top-5"
-      footer={ModalFooter({
+      footer={CreateUpdateModalFooter({
         actionMode,
         handleCancel,
         handleUpdateBooking,
@@ -381,6 +352,43 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           />
         </Form.Item>
       </Form>
+    </Modal>
+  );
+};
+
+export const DeleteBookingModal = ({
+  isModalOpen,
+  setIsModalOpen,
+  handleDeleteBooking,
+  booking,
+}: DeleteBookingModalProps) => {
+  return (
+    <Modal
+      open={isModalOpen}
+      onCancel={() => setIsModalOpen(false)}
+      title="Delete booking"
+      footer={
+        <>
+          <>
+            <Button
+              key="cancel"
+              form="create"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              key="update"
+              type="primary"
+              onClick={() => handleDeleteBooking(booking)}
+            >
+              Delete
+            </Button>
+          </>
+        </>
+      }
+    >
+      <span>Are you sure you want to delete this booking?</span>
     </Modal>
   );
 };
