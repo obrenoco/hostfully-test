@@ -11,23 +11,22 @@ import { RangeValue } from "rc-picker/lib/interface";
 
 import { Fragment, useState } from "react";
 import moment from "moment";
-import { DateRange, GetBookings, GetHosts, PostBooking } from "../types";
+import {
+  ActionMode,
+  DateRange,
+  GetBookings,
+  GetHosts,
+  PostBooking,
+} from "../types";
 import PlaceholderImage from "../../../assets/placeholder.png";
 import {
   calculateTotalNights,
+  calendarDateFormat,
   generateBlockedDates,
   isOverlapingWithBlockedDates,
 } from "../../../utils/dates";
 
-const { RangePicker } = DatePicker;
-
-enum ActionMode {
-  View = 0,
-  Edit = 1,
-  Create = 2,
-}
-
-export enum BookingsFormField {
+export enum BookingsFormFields {
   Id = "id",
   Name = "name",
   Image = "img",
@@ -44,22 +43,22 @@ export enum BookingsFormField {
 }
 
 export type BookingsFormTypes = {
-  [BookingsFormField.Id]: GetBookings["id"];
-  [BookingsFormField.Name]: GetBookings["name"] | GetHosts["name"];
-  [BookingsFormField.Image]: GetBookings["img"] | GetHosts["img"];
-  [BookingsFormField.Adults]: GetBookings["adults"] | PostBooking["adults"];
-  [BookingsFormField.Kids]: GetBookings["kids"] | PostBooking["kids"];
-  [BookingsFormField.Enfants]: GetBookings["enfants"] | PostBooking["enfants"];
-  [BookingsFormField.DateRange]: DateRange["dateRange"];
-  [BookingsFormField.TotalNights]: GetBookings["totalNights"];
-  [BookingsFormField.DailyPrice]:
+  [BookingsFormFields.Id]: GetBookings["id"];
+  [BookingsFormFields.Name]: GetBookings["name"] | GetHosts["name"];
+  [BookingsFormFields.Image]: GetBookings["img"] | GetHosts["img"];
+  [BookingsFormFields.Adults]: GetBookings["adults"] | PostBooking["adults"];
+  [BookingsFormFields.Kids]: GetBookings["kids"] | PostBooking["kids"];
+  [BookingsFormFields.Enfants]: GetBookings["enfants"] | PostBooking["enfants"];
+  [BookingsFormFields.DateRange]: DateRange["dateRange"];
+  [BookingsFormFields.TotalNights]: GetBookings["totalNights"];
+  [BookingsFormFields.DailyPrice]:
     | GetBookings["dailyPrice"]
     | GetHosts["dailyPrice"];
-  [BookingsFormField.TotalPrice]:
+  [BookingsFormFields.TotalPrice]:
     | GetBookings["totalPrice"]
     | PostBooking["totalPrice"];
-  [BookingsFormField.Observations]: PostBooking["observations"];
-  [BookingsFormField.BlockedDates]:
+  [BookingsFormFields.Observations]: PostBooking["observations"];
+  [BookingsFormFields.BlockedDates]:
     | GetBookings["blockedDates"]
     | GetHosts["blockedDates"];
 };
@@ -73,7 +72,14 @@ type BookingModalProps = {
   handleUpdateBooking: () => void;
   handleCreateBooking: (item: BookingsFormTypes) => void;
   hosts: GetHosts[];
-  bookings: GetBookings[];
+};
+
+type ModalFooterProps = {
+  actionMode: BookingModalProps["actionMode"];
+  setActionMode: BookingModalProps["setActionMode"];
+  handleCancel: BookingModalProps["handleCancel"];
+  handleUpdateBooking: BookingModalProps["handleUpdateBooking"];
+  isSubmitBtnDisabled: boolean;
 };
 
 const guestOptions = Array.from({ length: 11 }, (_, i) => ({
@@ -82,7 +88,62 @@ const guestOptions = Array.from({ length: 11 }, (_, i) => ({
 }));
 
 const formFieldRules = [{ required: true, message: "This field is required." }];
-const dateFormatList = ["MM/DD/YYYY", "MM/DD/YYYY"];
+
+const ModalFooter = ({
+  actionMode,
+  setActionMode,
+  handleCancel,
+  handleUpdateBooking,
+  isSubmitBtnDisabled,
+}: ModalFooterProps) => {
+  switch (actionMode) {
+    case ActionMode.View:
+      return (
+        <Button
+          key="edit"
+          form="create"
+          onClick={() => setActionMode(ActionMode.Edit)}
+        >
+          Edit
+        </Button>
+      );
+    case ActionMode.Edit:
+      return (
+        <>
+          <Button key="cancel" form="create" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button
+            key="update"
+            type="primary"
+            onClick={handleUpdateBooking}
+            disabled={isSubmitBtnDisabled}
+          >
+            Update
+          </Button>
+        </>
+      );
+    case ActionMode.Create:
+      return (
+        <>
+          <Button key="cancel" form="create" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button
+            key="submit"
+            type="primary"
+            htmlType="submit"
+            form="create"
+            disabled={isSubmitBtnDisabled}
+          >
+            Create
+          </Button>
+        </>
+      );
+    default:
+      return null;
+  }
+};
 
 export const BookingModal: React.FC<BookingModalProps> = ({
   isModalOpen,
@@ -93,108 +154,63 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   handleUpdateBooking,
   handleCreateBooking,
   hosts,
-  bookings,
 }) => {
   const [selectedProperty, setSelectedProperty] = useState<GetHosts>();
   const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(false);
-  const ModalFooter = () => {
-    switch (actionMode) {
-      case ActionMode.View:
-        return (
-          <Button
-            key="edit"
-            form="create"
-            onClick={() => setActionMode(ActionMode.Edit)}
-          >
-            Edit
-          </Button>
-        );
-      case ActionMode.Edit:
-        return (
-          <>
-            <Button key="cancel" form="create" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button
-              key="update"
-              type="primary"
-              onClick={handleUpdateBooking}
-              disabled={isSubmitBtnDisabled}
-            >
-              Update
-            </Button>
-          </>
-        );
-      case ActionMode.Create:
-        return (
-          <>
-            <Button key="cancel" form="create" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button
-              key="submit"
-              type="primary"
-              htmlType="submit"
-              form="create"
-              disabled={isSubmitBtnDisabled}
-            >
-              Create
-            </Button>
-          </>
-        );
-      default:
-        return null;
-    }
-  };
 
-  const onChangeHost = (e: number) => {
-    const filtered = hosts.find((property) => property.hostId === e);
-    setSelectedProperty(filtered);
-    form.setFieldValue(BookingsFormField.Id, filtered?.hostId);
-    form.setFieldValue(BookingsFormField.HostId, filtered?.hostId);
-    form.setFieldValue(BookingsFormField.Image, filtered?.img);
-    form.setFieldValue(BookingsFormField.DailyPrice, filtered?.dailyPrice);
-    form.setFieldValue(BookingsFormField.BlockedDates, filtered?.blockedDates);
+  const onChangeHost = (selectedHostId: number) => {
+    const selectedHost = hosts.find((host) => host.hostId === selectedHostId);
+    if (selectedHost) {
+      setSelectedProperty(selectedHost);
 
-    if (form.getFieldValue(BookingsFormField.DateRange)) {
-      form.setFieldValue(
-        BookingsFormField.TotalNights,
-        calculateTotalNights(form.getFieldValue(BookingsFormField.DateRange))
-      );
-      form.setFieldValue(
-        BookingsFormField.TotalPrice,
-        form.getFieldValue(BookingsFormField.DailyPrice) *
-          calculateTotalNights(form.getFieldValue(BookingsFormField.DateRange))
-      );
-    } else {
-      form.setFieldValue(BookingsFormField.TotalNights, 0);
-      form.setFieldValue(BookingsFormField.TotalPrice, 0);
+      const { hostId, img, dailyPrice, blockedDates } = selectedHost;
+      form.setFieldsValue({
+        [BookingsFormFields.Id]: hostId,
+        [BookingsFormFields.Image]: img,
+        [BookingsFormFields.DailyPrice]: dailyPrice,
+        [BookingsFormFields.BlockedDates]: blockedDates || [],
+      });
+
+      const dateRange = form.getFieldValue(BookingsFormFields.DateRange);
+      if (dateRange) {
+        const totalNights = calculateTotalNights(dateRange);
+        const totalPrice = dailyPrice * totalNights;
+
+        form.setFieldsValue({
+          [BookingsFormFields.TotalNights]: totalNights,
+          [BookingsFormFields.TotalPrice]: totalPrice,
+        });
+      } else {
+        form.setFieldsValue({
+          [BookingsFormFields.TotalNights]: 0,
+          [BookingsFormFields.TotalPrice]: 0,
+        });
+      }
     }
   };
 
   const onChangeDateRange = (values: RangeValue<moment.Moment>) => {
     if (!values || values[0] === null || values[1] === null) return;
-    const val: DateRange["dateRange"] = [values[0], values[1]];
+    const dateRange: DateRange["dateRange"] = [values[0], values[1]];
 
-    form.setFieldValue(
-      BookingsFormField.TotalNights,
-      calculateTotalNights(form.getFieldValue(BookingsFormField.DateRange))
-    );
-    form.setFieldValue(
-      BookingsFormField.TotalPrice,
-      form.getFieldValue(BookingsFormField.DailyPrice) *
-        calculateTotalNights(form.getFieldValue(BookingsFormField.DateRange))
-    );
+    form.setFieldsValue({
+      [BookingsFormFields.TotalNights]: calculateTotalNights(
+        form.getFieldValue(BookingsFormFields.DateRange)
+      ),
+      [BookingsFormFields.TotalPrice]:
+        form.getFieldValue(BookingsFormFields.DailyPrice) *
+        calculateTotalNights(form.getFieldValue(BookingsFormFields.DateRange)),
+    });
 
     if (
       isOverlapingWithBlockedDates(
-        val,
-        form.getFieldValue(BookingsFormField.BlockedDates) || []
+        dateRange,
+        form.getFieldValue(BookingsFormFields.BlockedDates) || []
       )
     ) {
       form.setFields([
         {
-          name: BookingsFormField.DateRange,
+          name: BookingsFormFields.DateRange,
           validating: false,
           validated: false,
           errors: ["Dates are not available"],
@@ -208,7 +224,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   };
 
   const bookingBlockedDates: GetBookings["blockedDates"] =
-    form.getFieldValue(BookingsFormField.BlockedDates) || [];
+    form.getFieldValue(BookingsFormFields.BlockedDates) || [];
 
   return (
     <Modal
@@ -222,7 +238,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         setSelectedProperty(undefined);
       }}
       className="top-5"
-      footer={ModalFooter()}
+      footer={ModalFooter({
+        actionMode,
+        handleCancel,
+        handleUpdateBooking,
+        isSubmitBtnDisabled,
+        setActionMode,
+      })}
     >
       <Form
         name="create"
@@ -238,16 +260,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         form={form}
         layout="vertical"
       >
-        <Form.Item name={BookingsFormField.Id} hidden>
+        <Form.Item name={BookingsFormFields.Id} hidden>
           <Fragment />
         </Form.Item>
 
-        <Form.Item name={BookingsFormField.Image}>
+        <Form.Item name={BookingsFormFields.Image}>
           <img
             className="h-24 w-24 rounded-full m-auto"
             alt="Property"
             src={
-              form.getFieldValue(BookingsFormField.Image) ||
+              form.getFieldValue(BookingsFormFields.Image) ||
               selectedProperty?.img ||
               PlaceholderImage
             }
@@ -255,7 +277,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         </Form.Item>
 
         <Form.Item
-          name={BookingsFormField.Name}
+          name={BookingsFormFields.Name}
           rules={formFieldRules}
           label="Name"
         >
@@ -269,13 +291,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           />
         </Form.Item>
 
-        <Form.Item name={BookingsFormField.HostId} hidden>
+        <Form.Item name={BookingsFormFields.HostId} hidden>
           <Fragment />
         </Form.Item>
 
         <div className="laptop:flex laptop:justify-between laptop:gap-3">
           <Form.Item
-            name={BookingsFormField.Adults}
+            name={BookingsFormFields.Adults}
             rules={formFieldRules}
             label="Adults"
             className="laptop:w-full"
@@ -284,7 +306,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           </Form.Item>
 
           <Form.Item
-            name={BookingsFormField.Kids}
+            name={BookingsFormFields.Kids}
             label="Children"
             className="laptop:w-full"
           >
@@ -292,7 +314,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           </Form.Item>
 
           <Form.Item
-            name={BookingsFormField.Enfants}
+            name={BookingsFormFields.Enfants}
             label="Enfants"
             className="laptop:w-full"
           >
@@ -301,20 +323,20 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         </div>
 
         <Form.Item
-          name={BookingsFormField.DateRange}
+          name={BookingsFormFields.DateRange}
           rules={formFieldRules}
           label="Arrival / Depart"
         >
-          <RangePicker
+          <DatePicker.RangePicker
             disabledDate={generateBlockedDates(bookingBlockedDates)}
             aria-required
             onChange={onChangeDateRange}
-            format={dateFormatList}
+            format={calendarDateFormat}
             className="w-full"
           />
         </Form.Item>
 
-        <Form.Item name={BookingsFormField.BlockedDates} hidden>
+        <Form.Item name={BookingsFormFields.BlockedDates} hidden>
           <Fragment />
         </Form.Item>
 
@@ -322,7 +344,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           <div className="flex items-center w-full gap-2">
             <Form.Item
               label={"Nights"}
-              name={BookingsFormField.TotalNights}
+              name={BookingsFormFields.TotalNights}
               className="w-full"
             >
               <Input disabled />
@@ -332,7 +354,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
             <Form.Item
               label="Daily price"
-              name={BookingsFormField.DailyPrice}
+              name={BookingsFormFields.DailyPrice}
               className="w-full"
             >
               <Input prefix="$" disabled />
@@ -343,14 +365,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
           <Form.Item
             label="Total price"
-            name={BookingsFormField.TotalPrice}
+            name={BookingsFormFields.TotalPrice}
             className="w-full"
           >
             <Input prefix="$" disabled />
           </Form.Item>
         </div>
 
-        <Form.Item name={BookingsFormField.Observations} label="Observations">
+        <Form.Item name={BookingsFormFields.Observations} label="Observations">
           <Input.TextArea
             rows={4}
             maxLength={200}

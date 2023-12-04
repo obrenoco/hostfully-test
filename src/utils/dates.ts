@@ -1,12 +1,12 @@
 import moment, { Moment } from "moment";
 import { DateRange, GetBookings } from "../pages/Bookings/types";
 
-export const calendarDateFormat = "MM/DD/YYYY";
+export const calendarDateFormat = "MM-DD-YYYY";
 
 export function dateRangeToObject(dateRange: DateRange["dateRange"]) {
   const [startDate, endDate] = dateRange;
-  const formattedStartDate = startDate.format("MM-DD-YYYY");
-  const formattedEndDate = endDate.format("MM-DD-YYYY");
+  const formattedStartDate = startDate.format(calendarDateFormat);
+  const formattedEndDate = endDate.format(calendarDateFormat);
 
   return {
     startDate: formattedStartDate,
@@ -34,13 +34,13 @@ export const generateBlockedDates = (
     const end = moment(endDate, calendarDateFormat);
 
     while (start.isSameOrBefore(end)) {
-      blockedDates.push(start.format("MM-DD-YYYY"));
+      blockedDates.push(start.format(calendarDateFormat));
       start.add(1, "day");
     }
   });
 
   return (date: Moment) => {
-    const formattedDate = date.format("MM-DD-YYYY");
+    const formattedDate = date.format(calendarDateFormat);
     return (
       moment(formattedDate, calendarDateFormat).isBefore(today) ||
       blockedDates.includes(formattedDate)

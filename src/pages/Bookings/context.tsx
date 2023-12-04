@@ -41,17 +41,18 @@ export const BookingsProvider = ({ children }: { children: ReactNode }) => {
       oldBooking.endDate !== booking.endDate
     ) {
       setHosts((prevHosts) => {
-        const a: GetHosts["blockedDates"] = currentHost.blockedDates.map((x) =>
-          JSON.stringify(x) ===
-          JSON.stringify([oldBooking.startDate, oldBooking.endDate])
-            ? [booking.startDate, booking.endDate]
-            : x
+        const modifiedBlockedDates: GetHosts["blockedDates"] =
+          currentHost.blockedDates.map((blockedDate) =>
+            JSON.stringify(blockedDate) ===
+            JSON.stringify([oldBooking.startDate, oldBooking.endDate])
+              ? [booking.startDate, booking.endDate]
+              : blockedDate
+          );
+        const newHost = { ...currentHost, blockedDates: modifiedBlockedDates };
+        const modifiedHost = prevHosts.map((prevHost) =>
+          prevHost.hostId === newHost.hostId ? newHost : prevHost
         );
-        const newHost = { ...currentHost, blockedDates: a };
-        const asdf = prevHosts.map((x) =>
-          x.hostId === newHost.hostId ? newHost : x
-        );
-        return asdf;
+        return modifiedHost;
       });
     }
 

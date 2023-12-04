@@ -47,22 +47,22 @@ export const BookingCard = ({
   onClickView,
 }: BookingCardType) => (
   <div
-    className="flex flex-col items-center w-full gap-4 pb-10  border-b-2 border-light-grey last:border-b-0 laptop:flex-row"
+    className="flex flex-col items-center w-full gap-4 pb-10 border-b-2 border-light-grey last:border-b-0 laptop:flex-row"
     key={index}
   >
-    <div className="flex items-center w-full flex-col gap-4 laptop:flex-row">
-      <div className="relative mr-5  laptop:inline-block">
-        <div className="w-24 h-24 rounded-full overflow-hidden p-1 border-4 border-secondary ">
+    <section className="flex items-center w-full flex-col gap-4 laptop:flex-row">
+      <figure className="relative mr-5 laptop:inline-block">
+        <div className="w-24 h-24 rounded-full overflow-hidden p-1 border-4 border-secondary">
           <img
             src={booking.img || PlaceholderImage}
             alt="Round photography"
             className="w-full h-full object-cover rounded-full"
           />
         </div>
-      </div>
+      </figure>
 
       <div className="w-full flex flex-col laptop:gap-2">
-        <div className="flex justify-between items-center laptop:pb-3 laptop:border-b-2 laptop:border-light-grey">
+        <header className="flex justify-between items-center laptop:pb-3 laptop:border-b-2 laptop:border-light-grey">
           <span>{booking.name}</span>
 
           <div className="flex flex-col-reverse items-end border-b-2 border-light-grey laptop:border-none laptop:items-center">
@@ -71,7 +71,7 @@ export const BookingCard = ({
               {formatNumberToDollar(booking.totalPrice)}
             </span>
           </div>
-        </div>
+        </header>
 
         <div className="flex justify-between">
           <div className="flex gap-2 md:flex-col">
@@ -94,10 +94,10 @@ export const BookingCard = ({
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div className="flex items-center w-full justify-between flex-col gap-10 laptop:flex-row">
-      <div className="flex items-center  w-full justify-between">
+    <aside className="flex items-center w-full justify-between flex-col gap-10 laptop:flex-row">
+      <div className="flex items-center w-full justify-between">
         <StatusDot color="primary" text="Pending" />
         <StatusDivider />
         <StatusDot color="light-grey" text="Booked" />
@@ -105,7 +105,7 @@ export const BookingCard = ({
         <StatusDot color="light-grey" text="Stay" />
       </div>
 
-      <div className="flex flex-col gap-1 w-full laptop:w-20">
+      <nav className="flex flex-col gap-1 w-full laptop:w-20">
         <button
           className="bg-secondary text-white rounded-sm border-none w-full py-1"
           onClick={() => {
@@ -126,7 +126,7 @@ export const BookingCard = ({
         >
           Delete
         </button>
-      </div>
-    </div>
+      </nav>
+    </aside>
   </div>
 );

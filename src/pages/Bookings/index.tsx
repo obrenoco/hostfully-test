@@ -1,17 +1,13 @@
-import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { Modal, Form, Empty, notification, Input } from "antd";
-import {
-  SearchOutlined,
-  PlusOutlined,
-  ExclamationCircleOutlined,
-} from "@ant-design/icons";
+import { useContext, useEffect, useState } from "react";
+import { Modal, Form, Empty, notification } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import "antd/dist/antd.min.css";
 import moment from "moment";
 import { BookingContext } from "./context";
 import { calendarDateFormat, dateRangeToObject } from "../../utils/dates";
 import {
   BookingModal,
-  BookingsFormField,
+  BookingsFormFields,
   BookingsFormTypes,
 } from "./components/Modal";
 import {
@@ -21,9 +17,16 @@ import {
   GetHosts,
   NotificationType,
 } from "./types";
-import { getHosts, getBookings } from "./api";
 import { BookingCard } from "./components/Card";
 import { generateRandomNumberId } from "../../utils/number";
+import { useBookingData } from "./hooks";
+import { BookingsHeader } from "./components/Header";
+
+const openNotificationWithIcon = (type: NotificationType) => {
+  notification[type]({
+    message: type === "success" && "Booking created",
+  });
+};
 
 export const Bookings = () => {
   const [form] = Form.useForm();
@@ -33,7 +36,6 @@ export const Bookings = () => {
   const {
     bookings: contextBookings,
     addBooking,
-    setBookings,
     hosts,
     setHosts,
     updateBooking,
@@ -42,14 +44,7 @@ export const Bookings = () => {
 
   const [filteredBookings, setFilteredBookings] = useState(contextBookings);
 
-  useEffect(() => {
-    setBookings(contextBookings);
-  }, [contextBookings, setBookings]);
-
-  useEffect(() => {
-    setBookings(getBookings);
-    setHosts(getHosts);
-  }, [setBookings, setHosts]);
+  useBookingData();
 
   useEffect(() => {
     setFilteredBookings(contextBookings);
@@ -57,7 +52,7 @@ export const Bookings = () => {
 
   const handleCancel = () => {
     form.resetFields();
-    form.setFieldValue(BookingsFormField.Image, "");
+    form.setFieldValue(BookingsFormFields.Image, "");
     setIsModalOpen(false);
   };
 
@@ -66,29 +61,14 @@ export const Bookings = () => {
     setIsModalOpen(true);
   };
 
-  const openNotificationWithIcon = (type: NotificationType) => {
-    notification[type]({
-      message: type === "success" && "Booking created",
-    });
-  };
-
-  const searchBooking = (e: ChangeEvent<HTMLInputElement>) => {
-    const searchStr = e.target.value;
-    const filteredItems = contextBookings.filter(
-      (booking) =>
-        booking.name.toLowerCase().includes(searchStr.toLowerCase()) ||
-        booking.startDate.includes(searchStr) ||
-        booking.endDate.includes(searchStr)
-    );
-    return setFilteredBookings(filteredItems || contextBookings);
-  };
-
   const onClickViewUpdateButton = (
     currentBooking: GetBookings,
     action: ActionMode
   ) => {
-    const currentHost = hosts.find((x) => currentBooking.hostId === x.hostId)!;
-    const editedField = {
+    const currentHost = hosts.find(
+      (host) => currentBooking.hostId === host.hostId
+    )!;
+    const editedFormFields = {
       ...currentBooking,
       property: currentBooking.id,
       img: currentBooking.img,
@@ -98,7 +78,7 @@ export const Bookings = () => {
         moment(currentBooking.endDate, calendarDateFormat),
       ],
     };
-    form.setFieldsValue(editedField);
+    form.setFieldsValue(editedFormFields);
     setActionMode(action);
     setIsModalOpen(true);
   };
@@ -130,7 +110,7 @@ export const Bookings = () => {
 
   const handleCreateBooking = (item: BookingsFormTypes) => {
     const { startDate, endDate } = dateRangeToObject(item.dateRange);
-    const newHost: GetHosts[] = hosts.map((host) =>
+    const updatedHosts: GetHosts[] = hosts.map((host) =>
       item["id"] === host.hostId
         ? {
             ...host,
@@ -139,7 +119,7 @@ export const Bookings = () => {
         : host
     );
 
-    const newBooking: GetBookings = {
+    const updatedBooking: GetBookings = {
       id: generateRandomNumberId(),
       hostId: item.id,
       blockedDates: [...item.blockedDates, [startDate, endDate]],
@@ -157,8 +137,8 @@ export const Bookings = () => {
     };
 
     try {
-      addBooking(newBooking);
-      setHosts(newHost);
+      addBooking(updatedBooking);
+      setHosts(updatedHosts);
       openNotificationWithIcon(NotificationType.Success);
       handleCancel();
     } catch (error) {
@@ -179,44 +159,35 @@ export const Bookings = () => {
   };
 
   return (
-    <div>
+    <main>
       <section className="py-4 px-6 laptop:w-[85%] mx-auto">
-        <div className="flex justify-between">
-          <button
-            onClick={openCreateModal}
-            className="bg-primary text-white px-3 rounded-sm"
-          >
-            <PlusOutlined /> New booking
-          </button>
-
-          <div className="w-52">
-            <Input
-              addonBefore={<SearchOutlined />}
-              placeholder="Search"
-              allowClear
-              onChange={searchBooking}
-            />
-          </div>
-        </div>
+        <BookingsHeader
+          openCreateModal={openCreateModal}
+          contextBookings={contextBookings}
+          setFilteredBookings={setFilteredBookings}
+        />
 
         <div className="flex flex-col gap-10 my-12">
           {filteredBookings.length === 0 ? (
             <Empty description="No booking found" />
           ) : (
-            filteredBookings.map((booking, index) => (
-              <BookingCard
-                index={index}
-                booking={booking}
-                onClickDelete={onClickDelete}
-                onClickView={(booking) =>
-                  onClickViewUpdateButton(booking, ActionMode.View)
-                }
-                onClickEdit={(booking) =>
-                  onClickViewUpdateButton(booking, ActionMode.Edit)
-                }
-                key={booking.id}
-              />
-            ))
+            <ul className="list-none">
+              {filteredBookings.map((booking, index) => (
+                <li key={booking.id}>
+                  <BookingCard
+                    index={index}
+                    booking={booking}
+                    onClickDelete={onClickDelete}
+                    onClickView={(booking) =>
+                      onClickViewUpdateButton(booking, ActionMode.View)
+                    }
+                    onClickEdit={(booking) =>
+                      onClickViewUpdateButton(booking, ActionMode.Edit)
+                    }
+                  />
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </section>
@@ -226,12 +197,11 @@ export const Bookings = () => {
         isModalOpen={isModalOpen}
         actionMode={actionMode}
         setActionMode={setActionMode}
-        bookings={contextBookings}
         hosts={hosts}
         handleCreateBooking={handleCreateBooking}
         handleCancel={handleCancel}
         handleUpdateBooking={handleUpdateBooking}
       />
-    </div>
+    </main>
   );
 };
