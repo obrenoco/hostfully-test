@@ -10,11 +10,17 @@ This README provides an overview of the project, the tools used, and key feature
 ## Features
 
 ✅ **Create a Booking**: Users can create a new booking by selecting a start and end date.
+
 ✅ **Read a Booking**: The application allows users to view details of existing bookings.
+
 ✅ **Update a Booking**: Users can modify the details of an existing booking.
+
 ✅ **Delete a Booking**: Bookings can be removed from the system as needed.
+
 ✅ **Global State Management**: Utilizes the Context API for global state management, ensuring efficient data handling across components.
+
 ✅ **Validation & User Experience**: Implements logic to prevent double (overlapping) bookings and validates start and end dates for each booking.
+
 ✅ **Responsive Design**: The webpages are designed to be fully responsive, ensuring a seamless experience on both desktop and mobile devices.
 
 ## Technologies Used
