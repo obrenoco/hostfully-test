@@ -3,15 +3,11 @@ import { BookingContext } from "./context";
 import { getHosts, getBookings } from "./mock";
 
 export const useBookingData = () => {
-  const {
-    bookings: contextBookings,
-    setBookings,
-    setHosts,
-  } = useContext(BookingContext);
+  const { bookings, setBookings, setHosts } = useContext(BookingContext);
 
   useEffect(() => {
-    setBookings(contextBookings);
-  }, [contextBookings, setBookings]);
+    setBookings(bookings);
+  }, [bookings, setBookings]);
 
   useEffect(() => {
     setBookings(getBookings);

@@ -41,13 +41,6 @@ export type DateFormatType = [
   `${string}-${string}-${string}`
 ];
 
-export enum NotificationType {
-  Success = "success",
-  Info = "info",
-  Warning = "warning",
-  Error = "error",
-}
-
 export type BookingsFormTypes = {
   [BookingsFormFields.Id]: GetBookings["id"];
   [BookingsFormFields.Name]: GetBookings["name"] | GetHosts["name"];

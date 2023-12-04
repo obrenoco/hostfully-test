@@ -19,3 +19,10 @@ export enum BookingsFormFields {
   BlockedDates = "blockedDates",
   HostId = "hostId",
 }
+
+export enum NotificationType {
+  Success = "success",
+  Info = "info",
+  Warning = "warning",
+  Error = "error",
+}

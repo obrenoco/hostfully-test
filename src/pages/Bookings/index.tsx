@@ -5,18 +5,12 @@ import moment from "moment";
 import { BookingContext } from "./context";
 import { calendarDateFormat, dateRangeToObject } from "../../utils/dates";
 import { CreateUpdateBookingModal } from "./components/Modal";
-import {
-  BookingsFormTypes,
-  DateRange,
-  GetBookings,
-  GetHosts,
-  NotificationType,
-} from "./types";
+import { BookingsFormTypes, DateRange, GetBookings, GetHosts } from "./types";
 import { BookingCard } from "./components/Card";
 import { generateRandomNumberId } from "../../utils/numbers";
 import { useBookingData } from "./hooks";
 import { BookingsHeader } from "./components/Header";
-import { ActionMode, BookingsFormFields } from "./enum";
+import { ActionMode, BookingsFormFields, NotificationType } from "./enum";
 
 const openNotificationWithIcon = (type: NotificationType) => {
   notification[type]({
@@ -30,7 +24,7 @@ export const Bookings = () => {
   const [actionMode, setActionMode] = useState(ActionMode.View);
 
   const {
-    bookings: contextBookings,
+    bookings,
     addBooking,
     hosts,
     setHosts,
@@ -38,13 +32,13 @@ export const Bookings = () => {
     deleteBooking,
   } = useContext(BookingContext);
 
-  const [filteredBookings, setFilteredBookings] = useState(contextBookings);
+  const [filteredBookings, setFilteredBookings] = useState(bookings);
 
   useBookingData();
 
   useEffect(() => {
-    setFilteredBookings(contextBookings);
-  }, [contextBookings]);
+    setFilteredBookings(bookings);
+  }, [bookings]);
 
   const handleCancel = () => {
     form.resetFields();
@@ -147,7 +141,7 @@ export const Bookings = () => {
       <section className="py-4 px-6 laptop:w-[85%] mx-auto">
         <BookingsHeader
           openCreateModal={openCreateModal}
-          contextBookings={contextBookings}
+          contextBookings={bookings}
           setFilteredBookings={setFilteredBookings}
         />
 
