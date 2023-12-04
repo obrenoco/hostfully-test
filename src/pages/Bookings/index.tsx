@@ -8,29 +8,22 @@ import {
 import "antd/dist/antd.min.css";
 import moment from "moment";
 import { BookingContext } from "./context";
-import { dateFormat, dateRangeToObject } from "../../utils/dates";
+import { calendarDateFormat, dateRangeToObject } from "../../utils/dates";
 import {
   BookingModal,
   BookingsFormField,
   BookingsFormTypes,
 } from "./components/Modal";
-import { DateRange, GetBookings, GetHosts } from "./types";
+import {
+  ActionMode,
+  DateRange,
+  GetBookings,
+  GetHosts,
+  NotificationType,
+} from "./types";
 import { getHosts, getBookings } from "./api";
 import { BookingCard } from "./components/Card";
 import { generateRandomNumberId } from "../../utils/number";
-
-enum NotificationType {
-  Success = "success",
-  Info = "info",
-  Warning = "warning",
-  Error = "error",
-}
-
-enum ActionMode {
-  View = 0,
-  Edit = 1,
-  Create = 2,
-}
 
 export const Bookings = () => {
   const [form] = Form.useForm();
@@ -57,8 +50,6 @@ export const Bookings = () => {
     setBookings(getBookings);
     setHosts(getHosts);
   }, [setBookings, setHosts]);
-
-  console.log(hosts);
 
   useEffect(() => {
     setFilteredBookings(contextBookings);
@@ -96,15 +87,15 @@ export const Bookings = () => {
     currentBooking: GetBookings,
     action: ActionMode
   ) => {
-    const hostssss = hosts.find((x) => currentBooking.hostId === x.hostId);
+    const currentHost = hosts.find((x) => currentBooking.hostId === x.hostId)!;
     const editedField = {
       ...currentBooking,
       property: currentBooking.id,
       img: currentBooking.img,
-      blockedDates: hostssss?.blockedDates,
+      blockedDates: currentHost.blockedDates,
       dateRange: [
-        moment(currentBooking.startDate, dateFormat),
-        moment(currentBooking.endDate, dateFormat),
+        moment(currentBooking.startDate, calendarDateFormat),
+        moment(currentBooking.endDate, calendarDateFormat),
       ],
     };
     form.setFieldsValue(editedField);
@@ -153,8 +144,8 @@ export const Bookings = () => {
       hostId: item.id,
       blockedDates: [...item.blockedDates, [startDate, endDate]],
       dailyPrice: item.dailyPrice,
-      startDate: startDate,
-      endDate: endDate,
+      startDate,
+      endDate,
       adults: item.adults,
       kids: item.kids,
       enfants: item.enfants,
@@ -171,6 +162,7 @@ export const Bookings = () => {
       openNotificationWithIcon(NotificationType.Success);
       handleCancel();
     } catch (error) {
+      openNotificationWithIcon(NotificationType.Error);
       console.error("Failed:", error);
     }
   };
@@ -189,7 +181,7 @@ export const Bookings = () => {
   return (
     <div>
       <section className="py-4 px-6 laptop:w-[85%] mx-auto">
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div className="flex justify-between">
           <button
             onClick={openCreateModal}
             className="bg-primary text-white px-3 rounded-sm"
@@ -197,18 +189,17 @@ export const Bookings = () => {
             <PlusOutlined /> New booking
           </button>
 
-          <Input
-            style={{ width: 200 }}
-            addonBefore={<SearchOutlined />}
-            placeholder="Search"
-            allowClear
-            onChange={searchBooking}
-          />
+          <div className="w-52">
+            <Input
+              addonBefore={<SearchOutlined />}
+              placeholder="Search"
+              allowClear
+              onChange={searchBooking}
+            />
+          </div>
         </div>
 
         <div className="flex flex-col gap-10 my-12">
-          {}
-
           {filteredBookings.length === 0 ? (
             <Empty description="No booking found" />
           ) : (

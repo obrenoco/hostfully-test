@@ -48,38 +48,12 @@ export const BookingsProvider = ({ children }: { children: ReactNode }) => {
             : x
         );
         const newHost = { ...currentHost, blockedDates: a };
-        console.log(a, newHost, [...prevHosts, newHost]);
-
         const asdf = prevHosts.map((x) =>
           x.hostId === newHost.hostId ? newHost : x
         );
-        console.log(asdf);
-
         return asdf;
       });
     }
-
-    // if (
-    //   prevFilteredBooking?.startDate !== booking.startDate &&
-    //   prevFilteredBooking?.endDate !== booking.endDate
-    // ) {
-    //   const modifiedHosts = hosts.map((host) => {
-    //     if (host.hostId === booking.hostId) {
-    //       const filteredDates = host.blockedDates.filter(
-    //         (pair) =>
-    //           pair[0] !== booking.startDate || pair[1] !== booking.endDate
-    //       );
-    //       console.log(filteredDates);
-
-    //       return { ...host, blockedDates: filteredDates };
-    //     }
-    //     return host;
-    //   });
-
-    //   console.log(modifiedHosts);
-
-    //   setHosts(modifiedHosts);
-    // }
 
     setBookings((prevBookings) => {
       const updatedBookings: GetBookings[] = prevBookings.map((prev) =>

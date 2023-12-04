@@ -38,3 +38,16 @@ export type DateFormatType = [
   `${string}-${string}-${string}`,
   `${string}-${string}-${string}`
 ];
+
+export enum NotificationType {
+  Success = "success",
+  Info = "info",
+  Warning = "warning",
+  Error = "error",
+}
+
+export enum ActionMode {
+  View = 0,
+  Edit = 1,
+  Create = 2,
+}

@@ -221,7 +221,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         handleCancel();
         setSelectedProperty(undefined);
       }}
-      style={{ top: 20 }}
+      className="top-5"
       footer={ModalFooter()}
     >
       <Form
