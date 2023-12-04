@@ -201,7 +201,9 @@ export const CreateUpdateBookingModal: React.FC<BookingModalProps> = ({
     <Modal
       forceRender
       title={
-        actionMode === ActionMode.Create ? "New booking" : "Update booking"
+        (actionMode === ActionMode.Create && "New booking") ||
+        (actionMode === ActionMode.View && "View booking") ||
+        (actionMode === ActionMode.Edit && "Edit booking")
       }
       open={isModalOpen}
       onCancel={() => {
