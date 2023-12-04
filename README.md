@@ -1,46 +1,50 @@
-# Getting Started with Create React App
+![img](https://www.hostfully.com/wp-content/uploads/2022/08/logo-1.svg)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Hostfully Test - React Technical Test
 
-## Available Scripts
+## Introduction
 
-In the project directory, you can run:
+The Hostfully Test is a React application developed as part of a technical test for Hostfully, a leading company in the hospitality industry. The project focuses on creating, managing, updating, and deleting bookings for properties. 
+This README provides an overview of the project, the tools used, and key features implemented.
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+✅ **Create a Booking**: Users can create a new booking by selecting a start and end date.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+✅ **Read a Booking**: The application allows users to view details of existing bookings.
 
-### `npm test`
+✅ **Update a Booking**: Users can modify the details of an existing booking.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+✅ **Delete a Booking**: Bookings can be removed from the system as needed.
 
-### `npm run build`
+✅ **Global State Management**: Utilizes the Context API for global state management, ensuring efficient data handling across components.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+✅ **Validation & User Experience**: Implements logic to prevent double (overlapping) bookings and validates start and end dates for each booking.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+✅ **Responsive Design**: The webpages are designed to be fully responsive, ensuring a seamless experience on both desktop and mobile devices.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Technologies Used
 
-### `npm run eject`
+- **React**
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- **Context API**: Global state management is achieved through the Context API, facilitating efficient data sharing between components.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **Ant Design**: The project incorporates Ant Design, a popular React UI library, to enhance the user interface and overall visual appeal.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- **Tailwind CSS**: Tailwind CSS is utilized for styling, enabling a streamlined and responsive design.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- **TypeScript**: The project is developed using TypeScript, adding static typing to the JavaScript codebase for enhanced maintainability.
 
-## Learn More
+- **Jest**: Jest is employed for testing, ensuring the reliability and robustness of the application.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **Moment**: Moment.js is used for handling and formatting date-related functionalities in the application.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Instructions
+
+1. Clone the repository to your local machine.
+2. Install dependencies using `npm install`.
+3. Run the application with `npm start`.
+4. Explore the functionalities of creating, managing, updating, and deleting bookings.
+
+## Made by
+[Breno Romeiro](https://www.linkedin.com/in/brenoromeiro/)
