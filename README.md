@@ -10,34 +10,22 @@ This README provides an overview of the project, the tools used, and key feature
 ## Features
 
 ✅ **Create a Booking**: Users can create a new booking by selecting a start and end date.
-
 ✅ **Read a Booking**: The application allows users to view details of existing bookings.
-
 ✅ **Update a Booking**: Users can modify the details of an existing booking.
-
 ✅ **Delete a Booking**: Bookings can be removed from the system as needed.
-
 ✅ **Global State Management**: Utilizes the Context API for global state management, ensuring efficient data handling across components.
-
 ✅ **Validation & User Experience**: Implements logic to prevent double (overlapping) bookings and validates start and end dates for each booking.
-
 ✅ **Responsive Design**: The webpages are designed to be fully responsive, ensuring a seamless experience on both desktop and mobile devices.
 
 ## Technologies Used
 
 - **React**
-
-- **Context API**: Global state management is achieved through the Context API, facilitating efficient data sharing between components.
-
-- **Ant Design**: The project incorporates Ant Design, a popular React UI library, to enhance the user interface and overall visual appeal.
-
-- **Tailwind CSS**: Tailwind CSS is utilized for styling, enabling a streamlined and responsive design.
-
-- **TypeScript**: The project is developed using TypeScript, adding static typing to the JavaScript codebase for enhanced maintainability.
-
-- **Jest**: Jest is employed for testing, ensuring the reliability and robustness of the application.
-
-- **Moment**: Moment.js is used for handling and formatting date-related functionalities in the application.
+- **Context API**
+- **Ant Design**
+- **Tailwind CSS**
+- **TypeScript**
+- **Jest**
+- **Moment**
 
 ## Instructions
 
