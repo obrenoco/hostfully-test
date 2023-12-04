@@ -4,6 +4,14 @@ import { GetBookings } from "../types";
 import { useState } from "react";
 import { DeleteBookingModal } from "./Modal";
 
+type BookingCardType = {
+  index: number;
+  booking: GetBookings;
+  onClickView: (currentooking: GetBookings) => void;
+  onClickEdit: (currentooking: GetBookings) => void;
+  handleDeleteBooking: (currentooking: GetBookings) => void;
+};
+
 const GuestIcon = ({
   num,
   type,
@@ -18,14 +26,6 @@ const GuestIcon = ({
     <span>{type}</span>
   </div>
 );
-
-type BookingCardType = {
-  index: number;
-  booking: GetBookings;
-  onClickView: (currentooking: GetBookings) => void;
-  onClickEdit: (currentooking: GetBookings) => void;
-  handleDeleteBooking: (currentooking: GetBookings) => void;
-};
 
 const StatusDot = ({ color, text }: { color: string; text: string }) => (
   <div className="relative inline-block">

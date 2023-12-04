@@ -6,8 +6,6 @@ import { BookingContext } from "./context";
 import { calendarDateFormat, dateRangeToObject } from "../../utils/dates";
 import { CreateUpdateBookingModal } from "./components/Modal";
 import {
-  ActionMode,
-  BookingsFormFields,
   BookingsFormTypes,
   DateRange,
   GetBookings,
@@ -18,6 +16,7 @@ import { BookingCard } from "./components/Card";
 import { generateRandomNumberId } from "../../utils/numbers";
 import { useBookingData } from "./hooks";
 import { BookingsHeader } from "./components/Header";
+import { ActionMode, BookingsFormFields } from "./enum";
 
 const openNotificationWithIcon = (type: NotificationType) => {
   notification[type]({

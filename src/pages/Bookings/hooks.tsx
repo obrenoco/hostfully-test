@@ -1,6 +1,6 @@
 import { useEffect, useContext } from "react";
 import { BookingContext } from "./context";
-import { getHosts, getBookings } from "./api";
+import { getHosts, getBookings } from "./mock";
 
 export const useBookingData = () => {
   const {

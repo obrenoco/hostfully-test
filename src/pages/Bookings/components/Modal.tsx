@@ -11,14 +11,7 @@ import { RangeValue } from "rc-picker/lib/interface";
 
 import { Fragment, useState } from "react";
 import moment from "moment";
-import {
-  ActionMode,
-  BookingsFormFields,
-  BookingsFormTypes,
-  DateRange,
-  GetBookings,
-  GetHosts,
-} from "../types";
+import { BookingsFormTypes, DateRange, GetBookings, GetHosts } from "../types";
 import PlaceholderImage from "../../../assets/placeholder.png";
 import {
   calculateTotalNights,
@@ -26,8 +19,9 @@ import {
   generateBlockedDates,
   isOverlapingWithBlockedDates,
 } from "../../../utils/dates";
+import { ActionMode, BookingsFormFields } from "../enum";
 
-type BookingModalProps = {
+type ViewEditBookingModalProps = {
   isModalOpen: boolean;
   form: FormInstance<BookingsFormTypes>;
   actionMode: ActionMode;
@@ -38,11 +32,11 @@ type BookingModalProps = {
   hosts: GetHosts[];
 };
 
-type ModalFooterProps = {
-  actionMode: BookingModalProps["actionMode"];
-  setActionMode: BookingModalProps["setActionMode"];
-  handleCancel: BookingModalProps["handleCancel"];
-  handleUpdateBooking: BookingModalProps["handleUpdateBooking"];
+type ViewEditModalFooterProps = {
+  actionMode: ViewEditBookingModalProps["actionMode"];
+  setActionMode: ViewEditBookingModalProps["setActionMode"];
+  handleCancel: ViewEditBookingModalProps["handleCancel"];
+  handleUpdateBooking: ViewEditBookingModalProps["handleUpdateBooking"];
   isSubmitBtnDisabled: boolean;
 };
 
@@ -66,7 +60,7 @@ const CreateUpdateModalFooter = ({
   handleCancel,
   handleUpdateBooking,
   isSubmitBtnDisabled,
-}: ModalFooterProps) => {
+}: ViewEditModalFooterProps) => {
   switch (actionMode) {
     case ActionMode.View:
       return (
@@ -116,7 +110,7 @@ const CreateUpdateModalFooter = ({
   }
 };
 
-export const CreateUpdateBookingModal: React.FC<BookingModalProps> = ({
+export const CreateUpdateBookingModal: React.FC<ViewEditBookingModalProps> = ({
   isModalOpen,
   form,
   actionMode,
