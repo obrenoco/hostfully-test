@@ -46,5 +46,8 @@ This README provides an overview of the project, the tools used, and key feature
 3. Run the application with `npm start`.
 4. Explore the functionalities of creating, managing, updating, and deleting bookings.
 
+## Documentation
+[Link here](https://unexpected-discovery-c82.notion.site/Hostfully-e3cab100b3bf48d1959d44909f8a97df?pvs=4)
+
 ## Made by
 [Breno Romeiro](https://www.linkedin.com/in/brenoromeiro/)
