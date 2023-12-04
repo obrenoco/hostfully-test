@@ -29,7 +29,7 @@ export const BookingsHeader = ({
     <header className="flex justify-between">
       <button
         onClick={openCreateModal}
-        className="bg-primary text-white px-3 rounded-sm"
+        className="bg-primary text-white px-3 rounded-sm whitespace-nowrap"
       >
         <PlusOutlined /> New booking
       </button>
